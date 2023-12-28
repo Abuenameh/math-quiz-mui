@@ -5,17 +5,15 @@ import {
     GridActionsCellItem,
     GridColDef,
     GridRowId, GridRowParams,
-    GridToolbar,
     GridToolbarContainer, GridToolbarQuickFilter
 } from '@mui/x-data-grid';
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import {ICourse} from "@/lib/database/models/course.model";
 import {useCallback} from "react";
-import type {} from "@mui/x-data-grid/themeAugmentation";
 import {useRouter} from "next/navigation";
 import { Box } from "@mui/material";
-import {confirmDialog, ConfirmDialog} from "@/components/ConfirmDialog";
+import {confirmDialog} from "@/components/ConfirmDialog";
 import {deleteCourse} from "@/lib/actions/course.actions";
 
 function FilterToolbar() {
@@ -38,13 +36,13 @@ export const CourseTable = ({data}: CourseTableProps) => {
         (id: GridRowId) => () => {
             router.push(`/courses/${id}/update`)
         },
-        [],
+        [router],
     );
 
     const onDeleteClick = useCallback(
         (id: GridRowId) => () => {
             confirmDialog("Confirm deletion", "Do you really want to delete this course?", async () => {
-                await deleteCourse({ courseId: id, path: "/courses" })
+                await deleteCourse({ courseId: id as string, path: "/courses" })
             });
         },
         [],

@@ -1,6 +1,6 @@
 'use client';
 
-import * as NextLink from "next/link";
+import NextLink from "next/link";
 import {usePathname} from "next/navigation";
 import {Link} from "@mui/material";
 

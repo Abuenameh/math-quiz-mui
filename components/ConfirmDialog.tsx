@@ -35,7 +35,7 @@ export const confirmDialog = (title: string, message: string, onSubmit: () => vo
     });
 };
 
-const ConfirmDialog = () => {
+export const ConfirmDialog = () => {
     const { title, message, onSubmit, close } = useConfirmDialogStore();
     return (
         <Dialog open={Boolean(onSubmit)} onClose={close} maxWidth="sm" fullWidth>
@@ -69,4 +69,4 @@ const ConfirmDialog = () => {
     );
 };
 
-export default ConfirmDialog;
+// export default ConfirmDialog;

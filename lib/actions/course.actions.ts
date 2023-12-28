@@ -1,6 +1,6 @@
 'use server'
 
-import {CreateCourseParams, GetAllCoursesParams, UpdateCourseParams} from "@/types";
+import {CreateCourseParams, GetAllCoursesParams, UpdateCourseParams, DeleteCourseParams} from "@/types";
 import {handleError} from "@/lib/utils";
 import {connectToDatabase} from "@/lib/database";
 import Course from "@/lib/database/models/course.model";

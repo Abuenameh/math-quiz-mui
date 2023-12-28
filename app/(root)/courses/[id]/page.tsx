@@ -1,8 +1,9 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { getCourseById } from "@/lib/actions/course.actions";
+import { SearchParamProps } from "@/types";
 
-const CourseDetails = async ({ params: { id } }) => {
+const CourseDetails = async ({ params: { id } }: SearchParamProps) => {
     const course = await getCourseById(id);
 
     return (

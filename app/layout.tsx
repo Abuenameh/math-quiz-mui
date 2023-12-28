@@ -8,7 +8,7 @@ import {CssBaseline} from "@mui/material";
 import {ClerkProvider} from "@clerk/nextjs";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import ThemeRegistry from "@/app/ThemeRegistry";
-import ConfirmDialog from "@/components/ConfirmDialog";
+import {ConfirmDialog} from "@/components/ConfirmDialog";
 
 export const metadata: Metadata = {
   title: 'Math Quiz',
