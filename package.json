@@ -9,8 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@abuenameh/compute-engine": "^0.22.1",
+    "@abuenameh/mathlive": "^0.98.4",
     "@clerk/nextjs": "^4.29.1",
-    "@cortex-js/compute-engine": "^0.22.0",
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
@@ -20,7 +21,6 @@
     "@mui/material-nextjs": "^5.15.0",
     "@mui/x-data-grid": "^6.18.6",
     "@mui/x-date-pickers": "^6.18.6",
-    "mathlive": "^0.98.5",
     "mongoose": "^8.0.3",
     "next": "14.0.4",
     "query-string": "^8.1.0",

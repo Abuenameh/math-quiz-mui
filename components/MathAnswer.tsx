@@ -1,6 +1,6 @@
 import {ChangeEvent, Key, useRef, useState} from "react";
 import Box from "@mui/material/Box";
-import {MathfieldElement} from "mathlive";
+import {MathfieldElement} from "@abuenameh/mathlive";
 
 type MathAnswerProps = {
     key: Key

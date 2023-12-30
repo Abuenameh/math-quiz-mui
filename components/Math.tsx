@@ -2,9 +2,9 @@
 
 import {InlineMath, BlockMath} from "react-katex";
 import regexifyString from "regexify-string";
-import "mathlive";
-import "@cortex-js/compute-engine"
-import {MathfieldElement} from "mathlive";
+import "@abuenameh/mathlive";
+import "@abuenameh/compute-engine"
+import {MathfieldElement} from "@abuenameh/mathlive";
 import {MathAnswer} from "@/components/MathAnswer";
 import Box from "@mui/material/Box";
 
