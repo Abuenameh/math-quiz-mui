@@ -4,6 +4,7 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+import "katex/dist/katex.min.css";
 import {CssBaseline} from "@mui/material";
 import {ClerkProvider} from "@clerk/nextjs";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";

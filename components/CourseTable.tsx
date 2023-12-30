@@ -12,13 +12,20 @@ import EditIcon from "@mui/icons-material/Edit";
 import {ICourse} from "@/lib/database/models/course.model";
 import {useCallback} from "react";
 import {useRouter} from "next/navigation";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import {confirmDialog} from "@/components/ConfirmDialog";
 import {deleteCourse} from "@/lib/actions/course.actions";
+import { Add } from '@mui/icons-material';
+import {router} from "next/client";
+import {Types} from "mongoose";
+// import Button from "@mui/material/Button";
 
-function FilterToolbar() {
+function CourseToolbar() {
+    const router = useRouter();
+
     return (
-        <GridToolbarContainer>
+        <GridToolbarContainer className={"m-2"}>
+            <Button variant={"contained"} startIcon={<Add />} onClick={() => router.push("/courses/create")}>Add Course</Button>
             <div className={"flex-1"} />
             <GridToolbarQuickFilter />
         </GridToolbarContainer>
@@ -26,15 +33,15 @@ function FilterToolbar() {
 }
 
 interface CourseTableProps {
-    data: ICourse[]
+    courses: ICourse[]
 }
 
-export const CourseTable = ({data}: CourseTableProps) => {
+export const CourseTable = ({courses}: CourseTableProps) => {
     const router = useRouter();
 
-    const onUpdateClick = useCallback(
+    const onEditClick = useCallback(
         (id: GridRowId) => () => {
-            router.push(`/courses/${id}/update`)
+            router.push(`/courses/${id}/edit`)
         },
         [router],
     );
@@ -52,12 +59,12 @@ export const CourseTable = ({data}: CourseTableProps) => {
         { field: "code", headerName: "Course code", width: 100 },
         { field: "title", headerName: "Course title", flex: 1 },
         { field: "actions", type: "actions", getActions: (params) => [
-                <GridActionsCellItem key={params.id} label={"Edit"} icon={<EditIcon/>} onClick={onUpdateClick(params.id)}/>,
+                <GridActionsCellItem key={params.id} label={"Edit"} icon={<EditIcon/>} onClick={onEditClick(params.id)}/>,
                 <GridActionsCellItem key={params.id} label={"Delete"} icon={<DeleteIcon/>} color={"error"} onClick={onDeleteClick(params.id)}/>,
             ]}
     ];
 
-    const rows = data.map((course) => ({
+    const rows = courses.map((course) => ({
         id: course._id,
         code: course.code,
         title: course.title
@@ -69,7 +76,7 @@ export const CourseTable = ({data}: CourseTableProps) => {
 
     return (
             <Box className={"h-96"}>
-        <DataGrid columns={columns} rows={rows} disableColumnFilter disableColumnSelector disableDensitySelector slots={{ toolbar: FilterToolbar }} initialState={{
+        <DataGrid columns={columns} rows={rows} disableColumnFilter disableColumnSelector disableDensitySelector slots={{ toolbar: CourseToolbar }} initialState={{
             filter: {
                 filterModel: {
                     items: [],

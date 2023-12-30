@@ -212,3 +212,12 @@
     @apply bg-gray-300 !important;
   }
 }
+
+math-field {
+  @apply border-2 text-xl;
+}
+
+/* Hide the menu toggle */
+math-field::part(menu-toggle) {
+  display: none;
+}

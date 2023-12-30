@@ -1,16 +1,16 @@
-import {model, models, Schema, Document} from "mongoose";
+import {model, models, Schema, Types} from "mongoose";
 
-export interface ICourse extends Document {
-    _id: string;
+export interface ICourse {
+    _id: Types.ObjectId;
     code: string;
     title: string;
-    questions: string[];
+    questions: Types.ObjectId[];
 }
 
 const CourseSchema = new Schema({
     code: { type: String, required: true, unique: true },
     title: { type: String, required: true },
-    questions: { type: [Schema.Types.ObjectId], ref: "Question" },
+    questions: { type: [Schema.Types.ObjectId], ref: "Question", required: true },
 })
 
 const Course = models.Course || model("Course", CourseSchema);

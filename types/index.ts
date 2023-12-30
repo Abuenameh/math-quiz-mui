@@ -1,4 +1,6 @@
 // ====== USER PARAMS
+import {Types} from "mongoose";
+
 export type CreateUserParams = {
     clerkId: string
     firstName: string
@@ -23,7 +25,7 @@ export type CreateCourseParams = {
     path: string
 }
 
-export type UpdateCourseParams = {
+export type EditCourseParams = {
     course: {
         _id: string
     code: string
@@ -41,6 +43,33 @@ export type GetAllCoursesParams = {
     query: string
     limit: number
     page: number
+}
+
+export type CreateQuestionParams = {
+    // courseId: string
+    question: {
+        course: string
+        name: string
+        question: string
+        declarations: string[][]
+    }
+    path: string
+}
+
+export type EditQuestionParams = {
+    question: {
+        _id: string
+        course: string
+        name: string
+        question: string
+        declarations: string[][]
+    }
+    path: string
+}
+
+export type DeleteQuestionParams = {
+    questionId: string
+    path: string
 }
 
 // ====== EVENT PARAMS
@@ -127,8 +156,9 @@ export type Event = {
 }
 
 // ====== CATEGORY PARAMS
-export type CreateCategoryParams = {
-    categoryName: string
+export type CreateTypeParams = {
+    typeID: string
+    typeName: string
 }
 
 // ====== ORDER PARAMS
@@ -172,6 +202,6 @@ export type RemoveUrlQueryParams = {
 }
 
 export type SearchParamProps = {
-    params: { id: string }
+    params: { courseId: string, questionId: string }
     searchParams: { [key: string]: string | string[] | undefined }
 }

@@ -6,11 +6,7 @@ import Typography from "@mui/material/Typography";
 // import {DataTableDemo} from "@/components/shared/DataTableDemo.tsx.bak";
 
 const CoursesPage = async () => {
-    const courses = await getAllCourses({
-        query: "",
-        page: 1,
-        limit: 6
-    })
+    const courses = await getAllCourses();
 
     return (
         <>
@@ -21,7 +17,7 @@ const CoursesPage = async () => {
                 </Box>
 
             <Box id="events" className="wrapper my-8 flex flex-col gap-8 md:gap-12">
-                <CourseTable data={courses?.data}/>
+                <CourseTable courses={courses}/>
             </Box>
         </>
     );

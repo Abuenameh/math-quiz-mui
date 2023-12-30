@@ -1,10 +1,17 @@
 'use server'
 
-import {CreateCourseParams, GetAllCoursesParams, UpdateCourseParams, DeleteCourseParams} from "@/types";
+import {
+    CreateCourseParams,
+    GetAllCoursesParams,
+    EditCourseParams,
+    DeleteQuestionParams,
+    DeleteCourseParams
+} from "@/types";
 import {handleError} from "@/lib/utils";
 import {connectToDatabase} from "@/lib/database";
 import Course from "@/lib/database/models/course.model";
 import {revalidatePath} from "next/cache";
+import {Types} from "mongoose";
 
 export const createCourse = async ({ course, path }: CreateCourseParams) => {
     try {
@@ -35,23 +42,23 @@ export async function getCourseById(courseId: string) {
     }
 }
 
-export async function updateCourse({ course: course, path }: UpdateCourseParams) {
+export async function editCourse({ course, path }: EditCourseParams) {
     try {
         await connectToDatabase()
 
-        const courseToUpdate = await Course.findById(course._id)
-        if (!courseToUpdate) {
+        const courseToEdit = await Course.findById(course._id)
+        if (!courseToEdit) {
             throw new Error('Course not found')
         }
 
-        const updatedCourse = await Course.findByIdAndUpdate(
+        const editedCourse = await Course.findByIdAndUpdate(
             course._id,
             { ...course },
             { new: true }
         )
         revalidatePath(path)
 
-        return JSON.parse(JSON.stringify(updatedCourse))
+        return JSON.parse(JSON.stringify(editedCourse))
     } catch (error) {
         handleError(error)
     }
@@ -68,29 +75,18 @@ export async function deleteCourse({ courseId, path }: DeleteCourseParams) {
     }
 }
 
-export async function getAllCourses({ query, limit = 6, page }: GetAllCoursesParams) {
+export async function getAllCourses() {
     try {
         await connectToDatabase()
 
-        const codeCondition = query ? { code: { $regex: query, $options: 'i' } } : {}
-        const titleCondition = query ? { title: { $regex: query, $options: 'i' } } : {}
-        const conditions = {
-            $and: [codeCondition, titleCondition],
-        }
+        const conditions = {};
 
-        const skipAmount = (Number(page) - 1) * limit
         const coursesQuery = Course.find(conditions)
-            .sort({ createdAt: 'desc' })
-            .skip(skipAmount)
-            .limit(limit)
+            .sort({ code: 'asc' })
 
         const courses = await coursesQuery
-        const coursesCount = await Course.countDocuments(conditions)
 
-        return {
-            data: JSON.parse(JSON.stringify(courses)),
-            totalPages: Math.ceil(coursesCount / limit),
-        }
+        return JSON.parse(JSON.stringify(courses));
     } catch (error) {
         handleError(error)
     }

@@ -3,32 +3,32 @@ import {CourseForm} from "@/components/CourseForm";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
-type UpdateCourseProps = {
+type EditCourseProps = {
     params: {
-        id: string
+        courseId: string
     }
 }
 
-const UpdateCourse = async ({ params: { id } }: UpdateCourseProps) => {
-    const course = await getCourseById(id)
+const EditCourse = async ({ params: { courseId } }: EditCourseProps) => {
+    const course = await getCourseById(courseId)
 
     return (
         <>
             <Box bgcolor={"primary.light"} className={"bg-dotted-pattern bg-cover bg-center py-5 md:py-5 text-center sm:text-left"} component={"section"}>
                 <Box className={"wrapper"}>
-                    <Typography variant={"h3"} className={""} fontWeight={"bold"}>Update Course</Typography>
+                    <Typography variant={"h3"} className={""} fontWeight={"bold"}>Edit Course</Typography>
                 </Box>
             </Box>
 
             <Box className="wrapper my-8">
                 <CourseForm
-                    type="Update"
+                    type="Edit"
                     course={course}
-                    courseId={course._id}
+                    courseId={courseId}
                 />
             </Box>
         </>
     )
 }
 
-export default UpdateCourse
+export default EditCourse
