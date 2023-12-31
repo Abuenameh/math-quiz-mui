@@ -13,8 +13,9 @@ type EditQuestionProps = {
     }
 }
 
-const EditCourse = async ({ params: { courseId, questionId } }: EditQuestionProps) => {
+const EditCourse = async ({ params: { questionId } }: EditQuestionProps) => {
     const question = await getQuestionById(questionId);
+    const courseId = question.courseId;
 
     return (
         <>

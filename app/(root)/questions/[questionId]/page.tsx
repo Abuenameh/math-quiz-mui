@@ -7,10 +7,11 @@ import {QuestionTable} from "@/components/QuestionTable";
 import {IQuestion} from "@/lib/database/models/question.model";
 import {getQuestionById, getQuestionsByCourse} from "@/lib/actions/question.actions";
 import {Math} from "@/components/Math";
+import {Question} from "@/components/Question";
 
-const QuestionPage = async ({ params: { courseId, questionId } }: SearchParamProps) => {
-    const course = await getCourseById(courseId);
+const QuestionPage = async ({ params: { questionId } }: SearchParamProps) => {
     const question = await getQuestionById(questionId);
+    const course = question.course;
 
     return (
 <>
@@ -22,7 +23,7 @@ const QuestionPage = async ({ params: { courseId, questionId } }: SearchParamPro
     </Box>
 
     <Box id="events" className="wrapper my-8 flex flex-col gap-8 md:gap-12">
-        <Math text={question.question}></Math>
+        <Question question={question.question}/>
         {/*<QuestionTable courseId={courseId} questions={questions}/>*/}
     </Box>
 </>

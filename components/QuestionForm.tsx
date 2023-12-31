@@ -13,6 +13,8 @@ import {ChangeEvent, useRef, useState} from "react";
 import {IconButton, Input, SvgIcon, TextField} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Add } from "@mui/icons-material";
+import { Types } from "mongoose";
+import Declaration, {IDeclaration} from "@/lib/database/models/declaration.model";
 
 type QuestionFormProps = {
     type: "Create" | "Edit"
@@ -33,13 +35,14 @@ export const QuestionForm = ({ type, courseId, question, questionId }: QuestionF
     const questionRef = useRef<HTMLInputElement>(null);
     const { reset, control } = useForm();
     const { isSubmitting } = useFormState({control});
-    const [declarationCounter, setDeclarationCounter] = useState(question?.declarations?.length || 0);
+    const [declarationCounter, setDeclarationCounter] = useState(question?.declarations.length || 0);
     // const [declarations, setDeclarations] = useState([{symbol: "", domain: ""}]);
-    const [declarations, setDeclarations] = useState<{id: number, symbol: string, domain: string}[]>(question?.declarations?.map((declaration, index) => {
+    // const [declarations, setDeclarations] = useState<{id: string, symbol: string, domain: string}>(question?.declarations.map((declaration, index) => ({id: declaration._idindex, symbol: declaration[0], domain: declaration[1]})) || []);
+    const [declarations, setDeclarations] = useState<{id: number, symbol: string, domain: string}[]>(question?.declarations.map((declaration, index) => {
         return {
             id: index,
-            symbol: declaration[0],
-            domain: declaration[1],
+            symbol: !(declaration instanceof Types.ObjectId) ? declaration.symbol : "",
+            domain: !(declaration instanceof Types.ObjectId) ? declaration.domain : "",
         }
     }) || []);
 
@@ -65,7 +68,7 @@ export const QuestionForm = ({ type, courseId, question, questionId }: QuestionF
         if (type === "Create") {
             try {
                 const newQuestion = await createQuestion({
-                    question: { name: data.name, question: data.question, declarations: declArray, course: courseId },
+                    question: { name: data.name, question: data.question, declarations: declarations, course: courseId },
                     path: `/courses/${courseId}`,
                 });
 
@@ -86,7 +89,7 @@ export const QuestionForm = ({ type, courseId, question, questionId }: QuestionF
 
             try {
                 const editedQuestion = await editQuestion({
-                    question: { name: data.name, question: data.question, declarations: declArray, course: courseId, _id: questionId },
+                    question: { _id: questionId,  name: data.name, question: data.question, declarations: declarations },
                     path: `/courses/${courseId}`,
                 });
 

@@ -27,7 +27,7 @@ function QuestionToolbar() {
 
     return (
         <GridToolbarContainer className={"m-2"}>
-            <Button variant={"contained"} startIcon={<Add />} onClick={() => router.push(`/courses/${params.courseId}/questions/create`)}>Add Question</Button>
+            <Button variant={"contained"} startIcon={<Add />} onClick={() => router.push(`/questions/create/${params.courseId}`)}>Add Question</Button>
             <div className={"flex-1"} />
             <GridToolbarQuickFilter />
         </GridToolbarContainer>
@@ -44,7 +44,7 @@ export const QuestionTable = ({courseId, questions}: QuestionTableProps) => {
 
     const onEditClick = useCallback(
         (id: GridRowId) => () => {
-            router.push(`/courses/${courseId}/questions/${id}/edit`)
+            router.push(`/questions/${id}/edit`)
         },
         [router],
     );
@@ -74,12 +74,12 @@ export const QuestionTable = ({courseId, questions}: QuestionTableProps) => {
     }));
 
     const onRowClick = async (params: GridRowParams) => {
-        router.push(`/courses/${courseId}/questions/${params.id}`);
+        router.push(`/questions/${params.id}`);
     };
 
     return (
         <Box className={"h-96"}>
-            <DataGrid columns={columns} rows={rows} disableColumnFilter disableColumnSelector disableDensitySelector slots={{ toolbar: QuestionToolbar }} initialState={{
+            <DataGrid columns={columns} rows={rows} disableRowSelectionOnClick disableColumnFilter disableColumnSelector disableDensitySelector slots={{ toolbar: QuestionToolbar }} initialState={{
                 filter: {
                     filterModel: {
                         items: [],

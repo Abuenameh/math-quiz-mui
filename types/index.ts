@@ -1,5 +1,6 @@
 // ====== USER PARAMS
 import {Types} from "mongoose";
+import {IDeclaration} from "@/lib/database/models/declaration.model";
 
 export type CreateUserParams = {
     clerkId: string
@@ -51,7 +52,7 @@ export type CreateQuestionParams = {
         course: string
         name: string
         question: string
-        declarations: string[][]
+        declarations: {id: number, symbol: string, domain: string}[]
     }
     path: string
 }
@@ -59,16 +60,30 @@ export type CreateQuestionParams = {
 export type EditQuestionParams = {
     question: {
         _id: string
-        course: string
+        // course: string
         name: string
         question: string
-        declarations: string[][]
+        declarations: {id: number, symbol: string, domain: string}[]
     }
     path: string
 }
 
 export type DeleteQuestionParams = {
     questionId: string
+    path: string
+}
+
+export type CreateDeclarationParams = {
+    // courseId: string
+    declaration: {
+        symbol: string
+        domain: string
+    }
+    path: string
+}
+
+export type DeleteDeclarationParams = {
+    declarationId: string
     path: string
 }
 

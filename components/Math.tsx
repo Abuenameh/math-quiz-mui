@@ -7,6 +7,7 @@ import "@abuenameh/compute-engine"
 import {MathfieldElement} from "@abuenameh/mathlive";
 import {MathAnswer} from "@/components/MathAnswer";
 import Box from "@mui/material/Box";
+import {useAbly} from "ably/react";
 
 declare global {
     namespace JSX {

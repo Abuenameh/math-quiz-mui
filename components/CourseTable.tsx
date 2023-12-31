@@ -65,7 +65,7 @@ export const CourseTable = ({courses}: CourseTableProps) => {
     ];
 
     const rows = courses.map((course) => ({
-        id: course._id,
+        id: course._id.toString("hex"),
         code: course.code,
         title: course.title
     }));
@@ -76,7 +76,7 @@ export const CourseTable = ({courses}: CourseTableProps) => {
 
     return (
             <Box className={"h-96"}>
-        <DataGrid columns={columns} rows={rows} disableColumnFilter disableColumnSelector disableDensitySelector slots={{ toolbar: CourseToolbar }} initialState={{
+        <DataGrid columns={columns} rows={rows} disableRowSelectionOnClick disableColumnFilter disableColumnSelector disableDensitySelector slots={{ toolbar: CourseToolbar }} initialState={{
             filter: {
                 filterModel: {
                     items: [],

@@ -7,6 +7,7 @@ import Stack from "@mui/material/Stack";
 import { useRouter } from "next/navigation";
 import {createCourse, editCourse} from "@/lib/actions/course.actions";
 import Box from "@mui/material/Box";
+import {Types} from "mongoose";
 
 type CourseFormProps = {
     type: "Create" | "Edit"
@@ -49,7 +50,7 @@ export const CourseForm = ({ type, course, courseId }: CourseFormProps) => {
 
             try {
                 const editedCourse = await editCourse({
-                    course: { ...data, _id: courseId },
+                    course: { _id: courseId, ...data },
                     path: `/courses`
                 });
 
