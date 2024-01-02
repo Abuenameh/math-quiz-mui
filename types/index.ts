@@ -1,6 +1,8 @@
 // ====== USER PARAMS
 import {Types} from "mongoose";
 import {IDeclaration} from "@/lib/database/models/declaration.model";
+import {MathfieldElement} from "@abuenameh/mathlive";
+import {MutableRefObject, RefObject} from "react";
 
 export type CreateUserParams = {
     clerkId: string
@@ -46,13 +48,37 @@ export type GetAllCoursesParams = {
     page: number
 }
 
-export type CreateQuestionParams = {
-    // courseId: string
-    question: {
+export type CreateTopicParams = {
+    topic: {
         course: string
+        num: number
+        name: string
+        description: string
+    }
+    path: string
+}
+
+export type EditTopicParams = {
+    topic: {
+        _id: string
+        num: number
+        name: string
+        description: string
+    }
+    path: string
+}
+
+export type DeleteTopicParams = {
+    topicId: string
+    path: string
+}
+
+export type CreateQuestionParams = {
+    question: {
+        topic: string
         name: string
         question: string
-        declarations: {id: number, symbol: string, domain: string}[]
+        showSolution: boolean
     }
     path: string
 }
@@ -60,10 +86,9 @@ export type CreateQuestionParams = {
 export type EditQuestionParams = {
     question: {
         _id: string
-        // course: string
         name: string
         question: string
-        declarations: {id: number, symbol: string, domain: string}[]
+        showSolution: boolean
     }
     path: string
 }
@@ -78,12 +103,23 @@ export type CreateDeclarationParams = {
     declaration: {
         symbol: string
         domain: string
+        question: string
     }
     path: string
 }
 
 export type DeleteDeclarationParams = {
     declarationId: string
+    path: string
+}
+
+export type CreateAnswerParams = {
+    // courseId: string
+    answer: {
+        answers: Map<string, {answer: string, correct: boolean, mark: number}>
+        question: string
+        user: string
+    }
     path: string
 }
 
@@ -217,6 +253,11 @@ export type RemoveUrlQueryParams = {
 }
 
 export type SearchParamProps = {
-    params: { courseId: string, questionId: string }
+    params: { courseId: string, topicId: string, questionId: string }
     searchParams: { [key: string]: string | string[] | undefined }
 }
+
+export type MathAnswerResults = Map<string, {answer: string, correct: boolean, mark: number}>
+//     {
+//     [key: string]: { answer: string, correct: boolean }
+// }

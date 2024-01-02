@@ -15,20 +15,13 @@ import Question from "@/lib/database/models/question.model";
 import {Types} from "mongoose";
 import Declaration, {IDeclaration} from "@/lib/database/models/declaration.model";
 import {createDeclaration, deleteDeclaration} from "@/lib/actions/declaration.actions";
+import Topic, {ITopic} from "@/lib/database/models/topic.model";
 
 export const createQuestion = async ({ question, path }: CreateQuestionParams) => {
     try {
         await connectToDatabase();
 
-        // const course = await Course.findById(question.courseId)
-        // if (!course) throw new Error('Course not found')
-
-        const declarations = await Promise.all(question.declarations.map((declaration, index) => {
-            return createDeclaration({declaration: declaration, path: ""})
-            // return Declaration.create({...declaration});
-        }))
-
-        const newQuestion = await Question.create({name: question.name, question: question.question, course: question.course, declarations: declarations});
+        const newQuestion = await Question.create({...question});
         revalidatePath(path)
 
         return JSON.parse(JSON.stringify(newQuestion));
@@ -42,8 +35,7 @@ export async function getQuestionById(questionId: string) {
         await connectToDatabase();
 
         const question = await Question.findById(questionId)
-            .populate<{course: ICourse}>("course")
-            .populate<{declarations: IDeclaration[]}>("declarations");
+            .populate<{topic: ITopic}>({path: "topic", model: Topic, populate: {path: "course", model: Course}})
 
         if (!question) {
             throw new Error('Question not found');
@@ -63,19 +55,11 @@ export async function editQuestion({ question, path }: EditQuestionParams) {
         if (!questionToEdit) {
             throw new Error('Question not found')
         }
-
-        questionToEdit.declarations.forEach((declaration: IDeclaration) => {
-            deleteDeclaration({declarationId: declaration._id.toString(), path: ""})
-        })
-
-        const declarations = await Promise.all(question.declarations.map((declaration, index) => {
-            return createDeclaration({declaration: declaration, path: ""})
-            // return Declaration.create({...declaration});
-        }))
+        console.log(questionToEdit)
 
         const editedQuestion = await Question.findByIdAndUpdate(
             question._id,
-            { ...question, declarations: declarations },
+            { ...question },
             { new: true }
         )
         revalidatePath(path)
@@ -86,16 +70,15 @@ export async function editQuestion({ question, path }: EditQuestionParams) {
     }
 }
 
-export async function getQuestionsByCourse(courseId: string) {
+export async function getQuestionsByTopic(topicId: string) {
     try {
         await connectToDatabase()
 
-        const conditions = { course: courseId }
+        const conditions = { topic: topicId }
 
         const questionsQuery = Question.find(conditions)
             .sort({ name: 'asc' })
-            .populate<{course: ICourse}>("course")
-            .populate<{declarations: IDeclaration[]}>("declarations");
+            .populate<{topic: ITopic}>({path: "topic", model: Topic, populate: {path: "course", model: Course}})
 
         const questions = await questionsQuery;
 
@@ -108,11 +91,6 @@ export async function getQuestionsByCourse(courseId: string) {
 export async function deleteQuestion({ questionId, path }: DeleteQuestionParams) {
     try {
         await connectToDatabase()
-
-        const question = await getQuestionById(questionId)
-        question.declarations.forEach((declaration: IDeclaration) => {
-            deleteDeclaration({declarationId: declaration._id.toString(), path: ""})
-        })
 
         const deletedQuestion = await Question.findByIdAndDelete(questionId)
         if (deletedQuestion) revalidatePath(path)

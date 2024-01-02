@@ -8,26 +8,31 @@ import { useRouter } from "next/navigation";
 import {createCourse, editCourse} from "@/lib/actions/course.actions";
 import Box from "@mui/material/Box";
 import {Types} from "mongoose";
+import {createTopic, editTopic} from "@/lib/actions/topic.actions";
+import {ITopic} from "@/lib/database/models/topic.model";
 import {useUser} from "@clerk/nextjs";
 
-type CourseFormProps = {
+type TopicFormProps = {
     type: "Create" | "Edit"
-    course?: ICourse,
-    courseId?: string
+    courseId: string
+    topic?: ITopic,
+    topicId?: string
 }
 
-type CourseProps = {
-    code: string,
-    title: string,
+type TopicProps = {
+    num: number,
+    name: string,
+    description: string,
 }
 
-export const CourseForm = ({ type, course, courseId }: CourseFormProps) => {
+export const TopicForm = ({ type, courseId, topic, topicId }: TopicFormProps) => {
     const router = useRouter();
     const { user } = useUser();
-    const formContext = useForm<CourseProps>({
+    const formContext = useForm<TopicProps>({
         defaultValues: {
-            code: course?.code || "",
-            title: course?.title || "",
+            num: topic?.num || undefined,
+            name: topic?.name || "",
+            description: topic?.description || "",
         },
     });
     const { reset} = formContext;
@@ -36,21 +41,21 @@ export const CourseForm = ({ type, course, courseId }: CourseFormProps) => {
     const isAdmin = user?.publicMetadata.isAdmin as boolean || false;
 
     if (!isAdmin) {
-        router.push("/courses");
+        router.push(`/courses/${courseId}`);
         return <></>;
     }
 
-    const onSubmit = async (data: CourseProps) => {
+    const onSubmit = async (data: TopicProps) => {
         if (type === "Create") {
             try {
-                const newCourse = await createCourse({
-                    course: { ...data },
-                    path: "/courses",
+                const newTopic = await createTopic({
+                    topic: { ...data, course: courseId },
+                    path: "/courses/${courseId}",
                 });
 
-                if (newCourse) {
+                if (newTopic) {
                     // reset();
-                    router.push(`/courses/${newCourse._id}`);
+                    router.push(`/courses/${courseId}`);
                 }
             } catch (error) {
                 console.log(error)
@@ -58,18 +63,18 @@ export const CourseForm = ({ type, course, courseId }: CourseFormProps) => {
         }
 
         if (type === "Edit") {
-            if (!courseId) {
+            if (!topicId) {
                 router.back();
                 return;
             }
 
             try {
-                const editedCourse = await editCourse({
-                    course: { _id: courseId, ...data },
-                    path: `/courses`
+                const editedTopic = await editTopic({
+                    topic: { _id: topicId, ...data },
+                    path: `/courses/${courseId}`
                 });
 
-                if (editedCourse) {
+                if (editedTopic) {
                     // reset();
                     router.back();
                     // router.push(`/courses/${editedCourse._id}`);
@@ -86,20 +91,18 @@ export const CourseForm = ({ type, course, courseId }: CourseFormProps) => {
             <Stack spacing={3}>
                 <Box className={"flex flex-col gap-5 md:flex-row"}>
                     <Box className={"w-50"}>
-                        <TextFieldElement validation={{
-                            pattern: {
-                                value: /^[A-Z]{4}[0-9]{4}$/,
-                                message: "Please enter a valid course code"
-                            }
-                        }} name={"code"} label={"Course code"} required/>
+                        <TextFieldElement name={"num"} label={"Topic number"} required/>
                     </Box>
                     <Box className={"w-full"}>
-                        <TextFieldElement fullWidth name={"title"} label={"Course title"} required/>
+                        <TextFieldElement fullWidth name={"name"} label={"Topic name"} required/>
                     </Box>
+                </Box>
+                <Box className={"w-full"}>
+                    <TextFieldElement fullWidth name={"description"} label={"Topic description"} multiline/>
                 </Box>
                 <Button disabled={isSubmitting} type={"submit"} variant={"contained"} size={"large"}
                         className={"button col.span-2 w-full"}>
-                    {isSubmitting ? "Submitting..." : `${type} Course`}
+                    {isSubmitting ? "Submitting..." : `${type} Topic`}
                 </Button>
             </Stack>
         </FormContainer>

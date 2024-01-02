@@ -1,7 +1,7 @@
 'use client'
 
 import {ICourse} from "@/lib/database/models/course.model";
-import {FormContainer, TextFieldElement, useForm, useFormState} from "react-hook-form-mui";
+import {CheckboxElement, FormContainer, TextFieldElement, useForm, useFormState} from "react-hook-form-mui";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import { useRouter } from "next/navigation";
@@ -9,72 +9,94 @@ import {createCourse, editCourse} from "@/lib/actions/course.actions";
 import {IQuestion} from "@/lib/database/models/question.model";
 import {createQuestion, editQuestion} from "@/lib/actions/question.actions";
 import Box from "@mui/material/Box";
-import {ChangeEvent, useRef, useState} from "react";
+import {ChangeEvent, useEffect, useRef, useState} from "react";
 import {IconButton, Input, SvgIcon, TextField} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Add } from "@mui/icons-material";
+import {Add, CheckBox} from "@mui/icons-material";
 import { Types } from "mongoose";
 import Declaration, {IDeclaration} from "@/lib/database/models/declaration.model";
+import {createDeclaration, deleteDeclaration, getDeclarationsByQuestion} from "@/lib/actions/declaration.actions";
+import {useUser} from "@clerk/nextjs";
 
 type QuestionFormProps = {
     type: "Create" | "Edit"
-    courseId: string
+    topicId: string
     question?: IQuestion
     questionId?: string
 }
 
 type QuestionProps = {
-    courseId: string,
+    // courseId: string,
     name: string,
     question: string,
+    showSolution: boolean,
     // declarations: string[][],
 }
 
-export const QuestionForm = ({ type, courseId, question, questionId }: QuestionFormProps) => {
+export const QuestionForm = ({ type, topicId, question, questionId }: QuestionFormProps) => {
     const router = useRouter();
+    const { user } = useUser();
     const questionRef = useRef<HTMLInputElement>(null);
-    const { reset, control } = useForm();
-    const { isSubmitting } = useFormState({control});
-    const [declarationCounter, setDeclarationCounter] = useState(question?.declarations.length || 0);
-    // const [declarations, setDeclarations] = useState([{symbol: "", domain: ""}]);
-    // const [declarations, setDeclarations] = useState<{id: string, symbol: string, domain: string}>(question?.declarations.map((declaration, index) => ({id: declaration._idindex, symbol: declaration[0], domain: declaration[1]})) || []);
-    const [declarations, setDeclarations] = useState<{id: number, symbol: string, domain: string}[]>(question?.declarations.map((declaration, index) => {
-        return {
-            id: index,
-            symbol: !(declaration instanceof Types.ObjectId) ? declaration.symbol : "",
-            domain: !(declaration instanceof Types.ObjectId) ? declaration.domain : "",
+    const formContext = useForm<QuestionProps>({
+        defaultValues: {
+            name: question?.name || "",
+            question: question?.question || "",
+            showSolution: question?.showSolution || false,
+        },
+    });
+    const { reset, setValue } = formContext;
+    const { isSubmitting } = useFormState(formContext);
+    const [declarationCounter, setDeclarationCounter] = useState(0);
+    const [declarations, setDeclarations] = useState<{id: number, symbol: string, domain: string}[]>([]);
+
+    useEffect(() => {
+        const fetchDeclarations = async () => {
+            if (questionId) {
+                console.log("fetching question declarations")
+                const questionDeclarations = await getDeclarationsByQuestion(questionId) as IDeclaration[];
+                setDeclarations(questionDeclarations.map((declaration, index) => {
+                    return {
+                        id: index,
+                        symbol: declaration.symbol,
+                        domain: declaration.domain,
+                    }
+                }));
+                setDeclarationCounter(questionDeclarations.length)
+                questionDeclarations.forEach((declaration, index) => {
+                    setValue<any>(`declarations.${index}.symbol`, declaration.symbol);
+                    setValue<any>(`declarations.${index}.domain`, declaration.domain);
+                })
+            }
         }
-    }) || []);
 
-//     if (question && question.declarations) {
-//         setDeclarations(question.declarations.map((declaration, index) => {
-//             return {
-//                 id: index,
-//                 symbol: declaration[0],
-//                 domain: declaration[1],
-//             }
-//         }));
-// // setDeclarations(initialDeclarations);
-// //         setDeclarationCounter(question.declarations.length)
-// //         setDeclarationCounter(1)
-//     }
-    //
+        fetchDeclarations().catch(console.error)
+    }, [questionId, setValue])
+
+    // const questionDeclarations = await getDeclarationsByQuestion(questionId);
+
+    const isAdmin = user?.publicMetadata.isAdmin as boolean || false;
+
+    if (!isAdmin) {
+        router.push(`/topics/${topicId}`);
+        return <></>;
+    }
+
     const onSubmit = async (data: QuestionProps) => {
-        const declArray = declarations.map((declaration, index) =>
-            [declaration.symbol, declaration.domain]
-        )
-        console.log(declArray)
-
         if (type === "Create") {
             try {
+                console.log(topicId)
                 const newQuestion = await createQuestion({
-                    question: { name: data.name, question: data.question, declarations: declarations, course: courseId },
-                    path: `/courses/${courseId}`,
+                    question: { ...data, topic: topicId },
+                    path: `/topics/${topicId}`,
                 });
 
                 if (newQuestion) {
-                    reset();
-                    router.push(`/courses/${courseId}`);
+                    declarations.forEach((declaration) => {
+                        createDeclaration({ declaration: {...declaration, question: newQuestion._id.toString("hex")}, path: ""})
+                    })
+
+                    // reset();
+                    router.push(`/topics/${topicId}`);
                 }
             } catch (error) {
                 console.log(error)
@@ -88,13 +110,23 @@ export const QuestionForm = ({ type, courseId, question, questionId }: QuestionF
             }
 
             try {
+                const questionDeclarations = await getDeclarationsByQuestion(questionId) as IDeclaration[];
+
+                questionDeclarations.forEach((declaration, index) => {
+                    deleteDeclaration({declarationId: declaration._id.toString("hex"), path: ""})
+                })
+
                 const editedQuestion = await editQuestion({
-                    question: { _id: questionId,  name: data.name, question: data.question, declarations: declarations },
-                    path: `/courses/${courseId}`,
+                    question: { _id: questionId,  ...data },
+                    path: `/topics/${topicId}`,
                 });
 
                 if (editedQuestion) {
-                    reset();
+                    declarations.forEach((declaration) => {
+                        createDeclaration({ declaration: {...declaration, question: questionId}, path: ""})
+                    })
+
+                    // reset();
                     router.back();
                     // router.push(`/courses/${editedQuestion._id}`);
                 }
@@ -139,15 +171,9 @@ export const QuestionForm = ({ type, courseId, question, questionId }: QuestionF
         }
     }
 
-    const initialDeclarations: Record<string, string> = {};
-    declarations.forEach((declaration, index) => {
-        initialDeclarations[`declarations.${index}.symbol`] = declaration.symbol;
-        initialDeclarations[`declarations.${index}.domain`] = declaration.domain;
-    })
-
     return (
         <>
-        <FormContainer defaultValues={{name: question ? question.name : "", question: question ? question.question : "", ...initialDeclarations}} onSuccess={onSubmit}>
+        <FormContainer formContext={formContext} onSuccess={onSubmit}>
             <Stack spacing={3}>
             <Box className={"flex flex-col gap-5 md:flex-row"}>
             </Box>
@@ -219,22 +245,20 @@ export const QuestionForm = ({ type, courseId, question, questionId }: QuestionF
                     <Box key={declaration.id} className={"flex flex-col gap-5 w-full md:flex-row"}>
                         <TextFieldElement
                             className={"w-32"}
-                            // value={declaration.symbol}
                             parseError={(value) => {
                                 return <></>
                             }}
-                            name={`declarations.${index}.symbol`}
+                            name={`declarations.${declaration.id}.symbol`}
                             label={"Symbol"}
                             onChange={(e) => onChangeDeclarationSymbol(e, index)}
                             required
                         />
                         <TextFieldElement
                             fullWidth
-                            // value={declaration.domain}
                             parseError={(value) => {
                                 return <></>
                             }}
-                            name={`declarations.${index}.domain`}
+                            name={`declarations.${declaration.id}.domain`}
                             label={"Domain"}
                             onChange={(e) => onChangeDeclarationDomain(e, index)}
                             required
@@ -244,6 +268,7 @@ export const QuestionForm = ({ type, courseId, question, questionId }: QuestionF
                     </Box>
                 ))}
                 <Button onClick={onAddDeclaration}>Add Declaration</Button>
+                <CheckboxElement name={"showSolution"} label={"Show Solution"}/>
             <Button disabled={isSubmitting} type={"submit"} variant={"contained"} size={"large"} className={"button col.span-2 w-full"}>
                 {isSubmitting ? "Submitting..." : `${type} Question`}
             </Button>

@@ -8,7 +8,7 @@ export interface IUser {
     firstName: string;
     lastName: string;
     photo: string;
-    answers: IAnswer[];
+    answers: Types.Array<Types.ObjectId | IAnswer>;
 }
 
 const UserSchema = new Schema({
@@ -17,7 +17,7 @@ const UserSchema = new Schema({
     firstName: { type: String },
     lastName: { type: String },
     photo: { type: String },
-    answers: { type: Schema.Types.ObjectId, ref: "Answer" },
+    answers: [{ type: Schema.Types.ObjectId, ref: "Answer" }],
 })
 
 const User = models.User || model("User", UserSchema);

@@ -1,62 +1,68 @@
-import {ChangeEvent, Key, useContext, useRef, useState} from "react";
+import {ChangeEvent, Key, MutableRefObject, RefObject, useContext, useEffect, useRef, useState} from "react";
 import Box from "@mui/material/Box";
 import {MathfieldElement} from "@abuenameh/mathlive";
 import {SolutionContext} from "@/components/Question";
 import {useAbly, useChannel} from "ably/react";
 import * as Ably from "ably"
+import {MathAnswerResults} from "@/types";
+import {CircularProgress, Container, Skeleton} from "@mui/material";
+import Typography from "@mui/material/Typography";
 
-type MathAnswerProps = {
-    key: Key
-    display: "inline" | "block"
+export type MathAnswerProps = {
+    display: "inline-block" | "block"
     id: string
     answer: string
     mark: number
+    responses: MathAnswerResults
+    response: string
+    submitted: boolean
+    showSolution: boolean
+    hasSavedResponse: boolean
+    correct: boolean
+    isAdmin: boolean
+    updateResponse: (id: string, response: string, correct: boolean, mark: number) => void
 }
 
-export const MathAnswer = ( { display, id, answer, mark }: MathAnswerProps ) => {
+export const MathAnswer = ( { display, id, answer, mark, response, submitted, showSolution, hasSavedResponse, correct, isAdmin, updateResponse }: MathAnswerProps ) => {
+    const boxRef = useRef<HTMLDivElement>(null);
     const responseRef = useRef<MathfieldElement>(null);
     const answerRef = useRef<MathfieldElement>(null);
-    const [correct, setCorrect] = useState(false);
-    // const showSolution = useContext(SolutionContext);
-    const ably = useAbly();
-    const [showSolution, setShowSolution] = useState(false);
 
-    // const { channel } = useChannel({channelName:"show-solution",options:{params: { rewind: "1" }}});
-    // const { channel } = useChannel2({channelName:"show-solution",options:{params: { rewind: "1" }}},() => {});
-    const { channel } = useChannel({channelName:"show-solution",options:{params: { rewind: "1" }}}, (message: Ably.Types.Message) => {
-        console.log(message);
-        setShowSolution(message.data == "1")
-    });
-    // // channel.setOptions({params: { rewind: "1" }});
+    const editable = !submitted && !hasSavedResponse && !isAdmin;
+    const actuallyShowSolution =  (submitted || hasSavedResponse) && showSolution;
 
-
-    const responseStyle = {
-        display: display === "inline" ? "inline-block" : display === "block" ? "block" : "auto",
-        width: display === "inline" ? "5em" : "auto",
-        height: display === "block" ? "5em" : "auto",
-        marginTop: display === "block" ? "1em" : "auto",
-    }
+    console.log("response", response, responseRef)
+    const responseStyle ={
+        display: (submitted && isAdmin) ? "none" : display,
+        width: (display === "inline-block") && (editable || isAdmin) ? "5em" : "auto",
+        height: (display === "block") && (editable || isAdmin) ? "5em" : "auto",
+        // marginTop: display === "block" ? "1em" : "auto",
+        color: actuallyShowSolution ? (correct ? "green" : "red") : "black",
+    };
     const answerStyle = {
-        display: display === "inline" ? "inline-block" : display === "block" ? "block" : "auto",
-        width: display === "inline" ? "5em" : "auto",
-        height: display === "block" ? "5em" : "auto",
-        marginLeft: display === "inline" ? "0.5em" : "auto",
-        marginTop: display === "block" ? "1em" : "auto",
-    }
+        display: !actuallyShowSolution ? "none" : display,
+        marginLeft: display === "inline-block" ? "0.5em" : "auto",
+        marginTop: display === "block" ? "0.5em" : "auto",
+    };
 
     const onChange = (e: ChangeEvent<MathfieldElement>) => {
         if (responseRef.current && answerRef.current) {
-            console.log(responseRef.current.expression.toString())
-            console.log(answerRef.current.expression.toString())
-            // setCorrect(responseRef.current.expression.simplify().isEqual(answerRef.current.expression.simplify()));
+            updateResponse(id, responseRef.current.getValue(), responseRef.current.expression.simplify().isEqual(answerRef.current.expression.simplify()), mark);
         }
     }
 
     return (
         <>
-            <math-field ref={responseRef} id={id} style={responseStyle} onInput={onChange}></math-field>
-            {showSolution && <math-field ref={answerRef} style={answerStyle}>{answer}</math-field>}
-            {correct.toString()}
+            <Box className={`${display} border-2 p-2 ${display === "block" ? "mt-5" : ""} bg-gray-100`}>
+            {editable ?
+                <math-field ref={responseRef} style={responseStyle} onInput={onChange}
+                            >{response}</math-field>
+                :
+                <math-field style={responseStyle} onInput={onChange}
+                            read-only={""}>{response}</math-field>
+            }
+            <math-field ref={answerRef} style={answerStyle} read-only={""}>{answer}</math-field>
+            </Box>
         </>
     );
 };

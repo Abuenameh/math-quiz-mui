@@ -18,16 +18,23 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import {Box, Button} from "@mui/material";
 import {IQuestion} from "@/lib/database/models/question.model";
 import {Add} from "@mui/icons-material";
-import {deleteQuestion, getQuestionsByCourse} from "@/lib/actions/question.actions";
+import {deleteQuestion, getQuestionById} from "@/lib/actions/question.actions";
 import {Types} from "mongoose";
+import {useChannel} from "ably/react";
+import {deleteDeclaration, getDeclarationsByQuestion} from "@/lib/actions/declaration.actions";
+import {IDeclaration} from "@/lib/database/models/declaration.model";
+import {useUser} from "@clerk/nextjs";
 
 function QuestionToolbar() {
     const router = useRouter();
     const params = useParams()
+    const { user } = useUser();
+
+    const isAdmin = user?.publicMetadata.isAdmin as boolean || false;
 
     return (
         <GridToolbarContainer className={"m-2"}>
-            <Button variant={"contained"} startIcon={<Add />} onClick={() => router.push(`/questions/create/${params.courseId}`)}>Add Question</Button>
+            {isAdmin && <Button variant={"contained"} startIcon={<Add />} onClick={() => router.push(`/questions/create/${params.topicId}`)}>Add Question</Button>}
             <div className={"flex-1"} />
             <GridToolbarQuickFilter />
         </GridToolbarContainer>
@@ -35,12 +42,20 @@ function QuestionToolbar() {
 }
 
 interface QuestionTableProps {
-    courseId: string
+    topicId: string
     questions: IQuestion[]
 }
 
-export const QuestionTable = ({courseId, questions}: QuestionTableProps) => {
+export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
     const router = useRouter();
+    const { channel: hideSolutionChannel } = useChannel({channelName:"hide-solution", options:{params: { rewind: "1" }}});
+    hideSolutionChannel.params = { rewind: "1" }
+    // const { channel } = useChannel("show-solution");
+    // channel.setOptions({params: { rewind: "1" }}).catch(console.error);
+    const { user } = useUser();
+
+    // const userId = user?.publicMetadata.userId as string;
+    const isAdmin = user?.publicMetadata.isAdmin as boolean || false;
 
     const onEditClick = useCallback(
         (id: GridRowId) => () => {
@@ -50,16 +65,23 @@ export const QuestionTable = ({courseId, questions}: QuestionTableProps) => {
     );
 
     const onDeleteClick = useCallback(
-        (id: GridRowId) => () => {
-            confirmDialog("Confirm deletion", "Do you really want to delete this question?", async () => {
-                await deleteQuestion({ questionId: id as string, path: `/courses/${courseId}` })
+        (id: GridRowId) => async () => {
+            const questionDeclarations = await getDeclarationsByQuestion(id as string) as IDeclaration[];
+
+            questionDeclarations.forEach((declaration, index) => {
+                deleteDeclaration({declarationId: declaration._id.toString("hex"), path: ""})
+            })
+
+            const question = await getQuestionById(id as string);
+            confirmDialog("Confirm deletion", `Do you really want to delete the question ${question.name}?`, async () => {
+                await deleteQuestion({ questionId: id as string, path: `/topics/${topicId}` })
             });
         },
-        [courseId],
+        [topicId],
     );
 
     const columns: GridColDef[] = [
-        { field: "name", headerName: "Name", width: 100 },
+        { field: "name", headerName: "Name", width: 200 },
         { field: "question", headerName: "Question", flex: 1 },
         { field: "actions", type: "actions", getActions: (params) => [
                 <GridActionsCellItem key={params.id} label={"Edit"} icon={<EditIcon/>} onClick={onEditClick(params.id)}/>,
@@ -86,6 +108,8 @@ export const QuestionTable = ({courseId, questions}: QuestionTableProps) => {
                         quickFilterExcludeHiddenColumns: true,
                     },
                 },
+            }} columnVisibilityModel={{
+                actions: isAdmin
             }} onRowClick={onRowClick}/>
         </Box>
     );

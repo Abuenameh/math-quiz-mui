@@ -5,35 +5,37 @@ import Typography from "@mui/material/Typography";
 import {IQuestion} from "@/lib/database/models/question.model";
 import {getQuestionById} from "@/lib/actions/question.actions";
 import {QuestionForm} from "@/components/QuestionForm";
+import {getTopicById} from "@/lib/actions/topic.actions";
+import {TopicForm} from "@/components/TopicForm";
 
-type EditQuestionProps = {
+type EditTopicProps = {
     params: {
-        questionId: string
+        topicId: string
     }
 }
 
-const EditQuestion = async ({ params: { questionId } }: EditQuestionProps) => {
-    const question = await getQuestionById(questionId);
-    const topicId = question.topicId;
+const EditTopic = async ({ params: { topicId } }: EditTopicProps) => {
+    const topic = await getTopicById(topicId);
+    const courseId = topic.courseId;
 
     return (
         <>
             <Box bgcolor={"primary.light"} className={"bg-dotted-pattern bg-cover bg-center py-5 md:py-5 text-center sm:text-left"} component={"section"}>
                 <Box className={"wrapper"}>
-                    <Typography variant={"h3"} className={""} fontWeight={"bold"}>Edit Question</Typography>
+                    <Typography variant={"h3"} className={""} fontWeight={"bold"}>Edit Topic</Typography>
                 </Box>
             </Box>
 
             <Box className="wrapper my-8">
-                <QuestionForm
+                <TopicForm
                     type="Edit"
+                    courseId={courseId}
+                    topic={topic}
                     topicId={topicId}
-                    question={question}
-                    questionId={questionId}
                 />
             </Box>
         </>
     )
 }
 
-export default EditQuestion
+export default EditTopic

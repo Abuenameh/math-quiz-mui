@@ -9,13 +9,16 @@ const PublishSolutionVisibility = () => {
 
     const ably = useAbly();
     const { channel } = useChannel({channelName:"show-solution",options:{params: { rewind: "1" }}});
+    channel.params = { rewind: "1" }
+    // const { channel } = useChannel("show-solution");
+    // channel.setOptions({params: { rewind: "1" }}).catch(console.error);
 
     const showSolution = () => {
-channel.publish({ data: "1" });
+channel.publish({ data: "1" }).catch(console.error);
     }
 
     const hideSolution = () => {
-        channel.publish({ data: "0" });
+        channel.publish({ data: "0" }).catch(console.error);
     }
 
     return (

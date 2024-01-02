@@ -10,10 +10,6 @@ export const headerLinks = [
         route: '/',
     },
     {
-        label: 'Create Course',
-        route: '/courses/create',
-    },
-    {
         label: 'Courses',
         route: '/courses',
     },

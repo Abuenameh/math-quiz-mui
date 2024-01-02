@@ -7,9 +7,11 @@ export default authMiddleware({
     publicRoutes: [
         '/',
         '/api/webhook/clerk',
+        '/api/ably/token',
     ],
     ignoredRoutes: [
         '/api/webhook/clerk',
+        '/api/ably/token',
     ]
 });
 

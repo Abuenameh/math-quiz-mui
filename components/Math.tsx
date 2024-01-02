@@ -5,9 +5,11 @@ import regexifyString from "regexify-string";
 import "@abuenameh/mathlive";
 import "@abuenameh/compute-engine"
 import {MathfieldElement} from "@abuenameh/mathlive";
-import {MathAnswer} from "@/components/MathAnswer";
+import {MathAnswer, MathAnswerProps} from "@/components/MathAnswer";
 import Box from "@mui/material/Box";
 import {useAbly} from "ably/react";
+import {MutableRefObject, RefObject} from "react";
+import {MathAnswerResults} from "@/types";
 
 declare global {
     namespace JSX {
@@ -17,12 +19,20 @@ declare global {
     }
 }
 
-function toMath(text: string) {
+type MathProps = {
+    text: string
+    responses: MathAnswerResults
+    savedResponses: MathAnswerResults
+    submitted: boolean
+    showSolution: boolean
+    isAdmin: boolean
+    updateResponse: (id: string, response: string, correct: boolean, mark: number) => void
+}
+
+function toMath({text, responses, savedResponses, submitted, showSolution, isAdmin, updateResponse}: MathProps) {
     return regexifyString({
-        // pattern: /\$([^\w\$][^\$]*)\$|\$\$([^\w\$][^\$]*)\$\$/gim,
         pattern: /‵([^‷′]*)′|‶([^‷″]*)″|‵‷(?:\[([^,]+),(\d+)])?([^‴]*)‴′|‶‷(?:\[([^,]+),(\d+)])?([^‴]*)‴″/gm,
         decorator: (match, index, result) => {
-            // console.log(result)
             if (result?.[1] !== undefined) {
                 return <InlineMath key={index}>{result?.[1]}</InlineMath>;
             }
@@ -30,12 +40,44 @@ function toMath(text: string) {
                 return <BlockMath key={index}>{result?.[2]}</BlockMath>;
             }
             else if (result?.[5] !== undefined) {
-                return <MathAnswer key={index} display="inline" id={result?.[3]} answer={result?.[5]} mark={Number(result?.[4])} />
-                // return <math-field key={index} style={{display: "inline-block", width: "5em"}}>{result?.[5]}</math-field>
+                const id = result?.[3] || index.toString();
+                const response = savedResponses?.get(id)?.answer;
+                // const responseCorrect = savedResponses?.get(id)?.correct || false;
+                const props: MathAnswerProps = {
+                    display: "inline-block",
+                    id: id,
+                    answer: result[5],
+                    mark: Number(result?.[4]) || 0,
+                    responses: responses,
+                    response: response || "",
+                    submitted: submitted,
+                    showSolution: showSolution,
+                    hasSavedResponse: response !== undefined,
+                    correct: responses?.get(id)?.correct || false,
+                    isAdmin: isAdmin,
+                    updateResponse: updateResponse
+                }
+                return <MathAnswer key={index} {...props} />
             }
             else if (result?.[8] !== undefined) {
-                return <MathAnswer key={index} display="block" id={result?.[3]} answer={result?.[8]} mark={Number(result?.[4])} />
-                // return <math-field key={index} style={{display: "block", height: "5em"}}>{result?.[8]}</math-field>
+                const id = result?.[6] || index.toString();
+                const response = savedResponses?.get(id)?.answer;
+                // const responseCorrect = savedResponses?.get(id)?.correct || false;
+                const props: MathAnswerProps = {
+                    display: "block",
+                    id: id,
+                    answer: result[8],
+                    mark: Number(result?.[7]) || 0,
+                    responses: responses,
+                    response: response || "",
+                    submitted: submitted,
+                    showSolution: showSolution,
+                    hasSavedResponse: response !== undefined,
+                    correct: responses?.get(id)?.correct || false,
+                    isAdmin: isAdmin,
+                    updateResponse: updateResponse
+                }
+                return <MathAnswer key={index} {...props} />
             }
             else {
                 return <>{match}</>;
@@ -45,10 +87,10 @@ function toMath(text: string) {
     })
 }
 
-export const Math = ( { text }: { text: string }) => {
+export const Math = ( props: MathProps) => {
     return (
         <Box>
-            {toMath(text)}
+            {toMath(props)}
         </Box>
     );
 };

@@ -7,7 +7,7 @@ export interface ICourse {
 }
 
 const CourseSchema = new Schema({
-    code: { type: String, required: true, unique: true },
+    code: { type: String, required: true },
     title: { type: String, required: true },
 })
 
