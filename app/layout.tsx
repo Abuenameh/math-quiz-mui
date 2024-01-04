@@ -10,6 +10,10 @@ import {ClerkProvider} from "@clerk/nextjs";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import ThemeRegistry from "@/app/ThemeRegistry";
 import {ConfirmDialog} from "@/components/ConfirmDialog";
+import dynamic from "next/dynamic";
+import { NextSSRPlugin } from '@uploadthing/react/next-ssr-plugin';
+import {ourFileRouter} from "@/app/api/uploadthing/core";
+import { extractRouterConfig } from 'uploadthing/server';
 
 export const metadata: Metadata = {
   title: 'Math Quiz',
@@ -26,10 +30,24 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const RealtimeComponent = dynamic(() => import("@/components/RealtimeComponent"), {
+    ssr: false
+  })
+
   return (
       <ClerkProvider>
     <html lang="en">
       <body>
+      <NextSSRPlugin
+          /**
+           * The `extractRouterConfig` will extract **only** the route configs
+           * from the router to prevent additional information from being
+           * leaked to the client. The data passed to the client is the same
+           * as if you were to fetch `/api/uploadthing` directly.
+           */
+          routerConfig={extractRouterConfig(ourFileRouter)}
+      />
+      <RealtimeComponent>
       <CssBaseline enableColorScheme />
       <AppRouterCacheProvider>
         <ThemeRegistry options={{ key: 'mui' }}>
@@ -37,6 +55,7 @@ export default function RootLayout({
       {children}
       </ThemeRegistry>
       </AppRouterCacheProvider>
+      </RealtimeComponent>
       </body>
     </html>
       </ClerkProvider>

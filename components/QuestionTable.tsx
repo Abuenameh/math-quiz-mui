@@ -18,12 +18,14 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import {Box, Button} from "@mui/material";
 import {IQuestion} from "@/lib/database/models/question.model";
 import {Add} from "@mui/icons-material";
-import {deleteQuestion, getQuestionById} from "@/lib/actions/question.actions";
+import {deleteQuestion, getQuestionById, setCurrentQuestion} from "@/lib/actions/question.actions";
 import {Types} from "mongoose";
 import {useChannel} from "ably/react";
 import {deleteDeclaration, getDeclarationsByQuestion} from "@/lib/actions/declaration.actions";
 import {IDeclaration} from "@/lib/database/models/declaration.model";
 import {useUser} from "@clerk/nextjs";
+import {CurrentQuestion} from "@/components/CurrentQuestion";
+import {deleteAnswersByQuestion} from "@/lib/actions/answer.actions";
 
 function QuestionToolbar() {
     const router = useRouter();
@@ -48,11 +50,8 @@ interface QuestionTableProps {
 
 export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
     const router = useRouter();
-    const { channel: hideSolutionChannel } = useChannel({channelName:"hide-solution", options:{params: { rewind: "1" }}});
-    hideSolutionChannel.params = { rewind: "1" }
-    // const { channel } = useChannel("show-solution");
-    // channel.setOptions({params: { rewind: "1" }}).catch(console.error);
     const { user } = useUser();
+    const { channel: currentQuestionChannel } = useChannel("current-question");
 
     // const userId = user?.publicMetadata.userId as string;
     const isAdmin = user?.publicMetadata.isAdmin as boolean || false;
@@ -80,27 +79,50 @@ export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
         [topicId],
     );
 
+    const onDeleteAnswersClick = useCallback(
+        (id: GridRowId) => async () => {
+        const question = await getQuestionById(id as string);
+        confirmDialog("Confirm deletion", `Do you really want to delete all answers to the question ${question.name}?`, async () => {
+            await deleteAnswersByQuestion(id as string)
+        });
+        },
+        [],
+    );
+
     const columns: GridColDef[] = [
         { field: "name", headerName: "Name", width: 200 },
         { field: "question", headerName: "Question", flex: 1 },
         { field: "actions", type: "actions", getActions: (params) => [
                 <GridActionsCellItem key={params.id} label={"Edit"} icon={<EditIcon/>} onClick={onEditClick(params.id)}/>,
                 <GridActionsCellItem key={params.id} label={"Delete"} icon={<DeleteIcon/>} color={"error"} onClick={onDeleteClick(params.id)}/>,
+                <GridActionsCellItem key={params.id} label={"Delete all answers"} icon={<DeleteIcon/>} color={"error"} onClick={onDeleteAnswersClick(params.id)} showInMenu={true}/>,
             ]}
     ];
+
+    const removeAnswers = (question: string): string => {
+        return question.replace(/⟬⟦.*⟭|⦗⟦.*⦘/gim, "");
+    }
 
     const rows = questions.map((question) => ({
         id: question._id,
         name: question.name,
-        question: question.question
+        question: removeAnswers(question.question)
     }));
 
     const onRowClick = async (params: GridRowParams) => {
+        if (isAdmin) {
+            console.log("Setting current question")
+            await setCurrentQuestion(params.id.toString())
+            await currentQuestionChannel.publish({})
+        }
+
         router.push(`/questions/${params.id}`);
     };
 
     return (
-        <Box className={"h-96"}>
+        <>
+            <CurrentQuestion />
+        <Box className={"h-[30rem]"}>
             <DataGrid columns={columns} rows={rows} disableRowSelectionOnClick disableColumnFilter disableColumnSelector disableDensitySelector slots={{ toolbar: QuestionToolbar }} initialState={{
                 filter: {
                     filterModel: {
@@ -108,9 +130,16 @@ export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
                         quickFilterExcludeHiddenColumns: true,
                     },
                 },
+                sorting: { sortModel: [{ field: "name", sort: "asc" }] },
+                // pagination: {
+                //     paginationModel: {
+                //         pageSize: 10,
+                //     },
+                // }
             }} columnVisibilityModel={{
                 actions: isAdmin
             }} onRowClick={onRowClick}/>
         </Box>
+        </>
     );
 };

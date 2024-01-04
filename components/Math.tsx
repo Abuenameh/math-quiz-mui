@@ -2,9 +2,9 @@
 
 import {InlineMath, BlockMath} from "react-katex";
 import regexifyString from "regexify-string";
-import "@abuenameh/mathlive";
-import "@abuenameh/compute-engine"
-import {MathfieldElement} from "@abuenameh/mathlive";
+import "mathlive";
+// import "compute-engine"
+import {MathfieldElement} from "mathlive";
 import {MathAnswer, MathAnswerProps} from "@/components/MathAnswer";
 import Box from "@mui/material/Box";
 import {useAbly} from "ably/react";
@@ -31,7 +31,7 @@ type MathProps = {
 
 function toMath({text, responses, savedResponses, submitted, showSolution, isAdmin, updateResponse}: MathProps) {
     return regexifyString({
-        pattern: /‵([^‷′]*)′|‶([^‷″]*)″|‵‷(?:\[([^,]+),(\d+)])?([^‴]*)‴′|‶‷(?:\[([^,]+),(\d+)])?([^‴]*)‴″/gm,
+        pattern: /⟬([^⟦][^⟭]*)⟭|⦗([^⟦][^⦘]*)⦘|⟬⟦([^,]+),(\d+)⟧([^⟭]*)⟭|⦗⟦([^,]+),(\d+)⟧([^⦘]*)⦘/gm,
         decorator: (match, index, result) => {
             if (result?.[1] !== undefined) {
                 return <InlineMath key={index}>{result?.[1]}</InlineMath>;
@@ -89,8 +89,10 @@ function toMath({text, responses, savedResponses, submitted, showSolution, isAdm
 
 export const Math = ( props: MathProps) => {
     return (
+        <>
         <Box>
             {toMath(props)}
         </Box>
+        </>
     );
 };

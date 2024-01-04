@@ -9,6 +9,7 @@ import Answer from "@/lib/database/models/answer.model";
 import {Types} from "mongoose";
 import Question, {IQuestion} from "@/lib/database/models/question.model";
 import {ICourse} from "@/lib/database/models/course.model";
+import {ITopic} from "@/lib/database/models/topic.model";
 
 export const createAnswer = async ({ answer }: CreateAnswerParams) => {
     try {
@@ -60,6 +61,39 @@ export async function getAnswerByQuestionAndUser(questionId: string, userId: str
         // }
 
         return JSON.parse(JSON.stringify(answer));
+    } catch (error) {
+        handleError(error);
+    }
+}
+
+export async function getAnswersByUser(userId: string) {
+    try {
+        await connectToDatabase();
+
+        const conditions = { user: userId }
+
+        const answers = await Answer.find(conditions)
+            .populate<{question: IQuestion, topic: ITopic, course: ICourse}>({path: "question", model: Question, populate: {path: "topic", model: "Topic", populate: {path: "course", model: "Course"}}});
+
+        return JSON.parse(JSON.stringify(answers));
+    } catch (error) {
+        handleError(error);
+    }
+}
+
+export async function deleteAnswersByQuestion(questionId: string) {
+    try {
+        await connectToDatabase();
+
+        const conditions = { question: questionId }
+
+        await Answer.deleteMany(conditions);
+
+        // if (!answer) {
+        //     throw new Error('Answer not found');
+        // }
+
+        // return JSON.parse(JSON.stringify(answer));
     } catch (error) {
         handleError(error);
     }

@@ -9,10 +9,10 @@ export default function RealtimeComponent({
     children: React.ReactNode
 }) {
     const client = new Ably.Realtime.Promise({ authUrl: "/api/ably/token", authMethod: "POST"});
-    return (
+    return (<>
         <AblyProvider client={client}>
             {children}
         </AblyProvider>
-    );
+    </>);
 };
 

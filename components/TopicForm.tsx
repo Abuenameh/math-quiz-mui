@@ -11,6 +11,7 @@ import {Types} from "mongoose";
 import {createTopic, editTopic} from "@/lib/actions/topic.actions";
 import {ITopic} from "@/lib/database/models/topic.model";
 import {useUser} from "@clerk/nextjs";
+import {CurrentQuestion} from "@/components/CurrentQuestion";
 
 type TopicFormProps = {
     type: "Create" | "Edit"
@@ -87,6 +88,7 @@ export const TopicForm = ({ type, courseId, topic, topicId }: TopicFormProps) =>
 
     return (
         <>
+            <CurrentQuestion />
         <FormContainer formContext={formContext} onSuccess={onSubmit}>
             <Stack spacing={3}>
                 <Box className={"flex flex-col gap-5 md:flex-row"}>
@@ -102,7 +104,7 @@ export const TopicForm = ({ type, courseId, topic, topicId }: TopicFormProps) =>
                 </Box>
                 <Button disabled={isSubmitting} type={"submit"} variant={"contained"} size={"large"}
                         className={"button col.span-2 w-full"}>
-                    {isSubmitting ? "Submitting..." : `${type} Topic`}
+                    {isSubmitting ? "Submitting..." : `${type === "Edit" ? "Save" : type} Topic`}
                 </Button>
             </Stack>
         </FormContainer>

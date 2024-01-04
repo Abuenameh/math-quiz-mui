@@ -25,6 +25,7 @@ import {IDeclaration} from "@/lib/database/models/declaration.model";
 import {deleteQuestion, getQuestionsByTopic} from "@/lib/actions/question.actions";
 import {IQuestion} from "@/lib/database/models/question.model";
 import {useUser} from "@clerk/nextjs";
+import {CurrentQuestion} from "@/components/CurrentQuestion";
 // import Button from "@mui/material/Button";
 
 function TopicToolbar() {
@@ -78,9 +79,9 @@ export const TopicTable = ({courseId, topics}: TopicTableProps) => {
     );
 
     const columns: GridColDef[] = [
-        { field: "num", headerName: "#", width: 10 },
+        { field: "num", headerName: "#", width: 80 },
         { field: "name", headerName: "Topic name", width: 200 },
-        { field: "description", headerName: "Topic description", flex: 1 },
+        { field: "description", headerName: "Topic description", flex: 1, renderCell: (params) => (<div style={{whiteSpace: "pre-line"}}>{params.value}</div>) },
         { field: "actions", type: "actions", getActions: (params) => [
                 <GridActionsCellItem key={params.id} label={"Edit"} icon={<EditIcon/>} onClick={onEditClick(params.id)}/>,
                 <GridActionsCellItem key={params.id} label={"Delete"} icon={<DeleteIcon/>} color={"error"} onClick={onDeleteClick(params.id)}/>,
@@ -99,17 +100,26 @@ export const TopicTable = ({courseId, topics}: TopicTableProps) => {
     };
 
     return (
-            <Box className={"h-96"}>
-        <DataGrid columns={columns} rows={rows} disableRowSelectionOnClick disableColumnFilter disableColumnSelector disableDensitySelector slots={{ toolbar: TopicToolbar }} initialState={{
+        <>
+            <CurrentQuestion />
+            <Box className={"h-[30rem]"}>
+        <DataGrid getRowHeight={() => 'auto'} columns={columns} rows={rows} disableRowSelectionOnClick disableColumnFilter disableColumnSelector disableDensitySelector slots={{ toolbar: TopicToolbar }} initialState={{
             filter: {
                 filterModel: {
                     items: [],
                     quickFilterExcludeHiddenColumns: true,
                 },
             },
+            sorting: { sortModel: [{ field: "num", sort: "asc" }] },
+            // pagination: {
+            //     paginationModel: {
+            //         pageSize: 10,
+            //     },
+            // }
         }} columnVisibilityModel={{
             actions: isAdmin
         }} onRowClick={onRowClick}/>
             </Box>
+            </>
     );
 };

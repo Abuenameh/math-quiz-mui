@@ -5,18 +5,25 @@ import { SearchParamProps } from "@/types";
 import {CourseTable} from "@/components/CourseTable";
 import {QuestionTable} from "@/components/QuestionTable";
 import {IQuestion} from "@/lib/database/models/question.model";
-import {getQuestionsByTopic} from "@/lib/actions/question.actions";
+import {getAnsweredQuestionsByTopic, getQuestionsByTopic} from "@/lib/actions/question.actions";
 import dynamic from "next/dynamic";
 import {TopicTable} from "@/components/TopicTable";
 import {getTopicById, getTopicsByCourse} from "@/lib/actions/topic.actions";
 import {ITopic} from "@/lib/database/models/topic.model";
+import {currentUser} from "@clerk/nextjs";
 
 const CourseDetails = async ({ params: { topicId } }: SearchParamProps) => {
     const RealtimeComponent = dynamic(() => import("@/components/RealtimeComponent"), {
         ssr: false
     })
+
+    const user = await currentUser();
+    const userId = user?.publicMetadata?.userId as string;
+    const isAdmin = user?.publicMetadata.isAdmin as boolean || false;
+    console.log(userId)
+
     const topic = await getTopicById(topicId);
-    const questions: IQuestion[] = await getQuestionsByTopic(topicId);
+    const questions: IQuestion[] = isAdmin ? await getQuestionsByTopic(topicId) :  await getAnsweredQuestionsByTopic(topicId, userId);
     const course = await topic.course;
 
     return (

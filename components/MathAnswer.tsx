@@ -1,11 +1,11 @@
 import {ChangeEvent, Key, MutableRefObject, RefObject, useContext, useEffect, useRef, useState} from "react";
 import Box from "@mui/material/Box";
-import {MathfieldElement} from "@abuenameh/mathlive";
+import {MathfieldElement} from "mathlive";
 import {SolutionContext} from "@/components/Question";
 import {useAbly, useChannel} from "ably/react";
 import * as Ably from "ably"
 import {MathAnswerResults} from "@/types";
-import {CircularProgress, Container, Skeleton} from "@mui/material";
+import {CircularProgress, Container, Skeleton, TextField} from "@mui/material";
 import Typography from "@mui/material/Typography";
 
 export type MathAnswerProps = {
@@ -27,17 +27,27 @@ export const MathAnswer = ( { display, id, answer, mark, response, submitted, sh
     const boxRef = useRef<HTMLDivElement>(null);
     const responseRef = useRef<MathfieldElement>(null);
     const answerRef = useRef<MathfieldElement>(null);
+    const initializedResponse = useRef(false)
+
+    useEffect(() => {
+        if (!initializedResponse.current) {
+            updateResponse(id, response, correct, mark);
+            initializedResponse.current = true
+        }
+    }, [correct, id, mark, response, updateResponse])
 
     const editable = !submitted && !hasSavedResponse && !isAdmin;
     const actuallyShowSolution =  (submitted || hasSavedResponse) && showSolution;
+    // console.log("actuallyShowSolution", actuallyShowSolution, submitted, hasSavedResponse, showSolution)
 
-    console.log("response", response, responseRef)
+    // console.log("response", response, responseRef)
     const responseStyle ={
         display: (submitted && isAdmin) ? "none" : display,
         width: (display === "inline-block") && (editable || isAdmin) ? "5em" : "auto",
         height: (display === "block") && (editable || isAdmin) ? "5em" : "auto",
         // marginTop: display === "block" ? "1em" : "auto",
-        color: actuallyShowSolution ? (correct ? "green" : "red") : "black",
+        color: actuallyShowSolution ? (correct ? "black" : "black") : "auto",
+        backgroundColor: actuallyShowSolution ? (correct ? "#81c784" : "#e57373") : "auto",
     };
     const answerStyle = {
         display: !actuallyShowSolution ? "none" : display,
@@ -46,14 +56,19 @@ export const MathAnswer = ( { display, id, answer, mark, response, submitted, sh
     };
 
     const onChange = (e: ChangeEvent<MathfieldElement>) => {
+        console.log(responseRef.current?.expression.toString())
+        // console.log("onChange assumptions", MathfieldElement.computeEngine?.context?.ids)
         if (responseRef.current && answerRef.current) {
+            // console.log(responseRef.current.expression)
+            // console.log(responseRef.current.expression, answerRef.current.expression)
             updateResponse(id, responseRef.current.getValue(), responseRef.current.expression.simplify().isEqual(answerRef.current.expression.simplify()), mark);
         }
     }
 
     return (
         <>
-            <Box className={`${display} border-2 p-2 ${display === "block" ? "mt-5" : ""} bg-gray-100`}>
+            <Box className={`${display} ${display === "block" ? "mt-5" : ""} ${!isAdmin ? "border-2 p-2 bg-gray-100" : ""}`}>
+                {/*<TextField value={responseRef.current?.expression}></TextField>*/}
             {editable ?
                 <math-field ref={responseRef} style={responseStyle} onInput={onChange}
                             >{response}</math-field>

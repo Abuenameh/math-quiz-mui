@@ -9,6 +9,7 @@ import {createCourse, editCourse} from "@/lib/actions/course.actions";
 import Box from "@mui/material/Box";
 import {Types} from "mongoose";
 import {useUser} from "@clerk/nextjs";
+import {CurrentQuestion} from "@/components/CurrentQuestion";
 
 type CourseFormProps = {
     type: "Create" | "Edit"
@@ -82,6 +83,7 @@ export const CourseForm = ({ type, course, courseId }: CourseFormProps) => {
 
     return (
         <>
+            <CurrentQuestion />
         <FormContainer formContext={formContext} onSuccess={onSubmit}>
             <Stack spacing={3}>
                 <Box className={"flex flex-col gap-5 md:flex-row"}>
@@ -99,7 +101,7 @@ export const CourseForm = ({ type, course, courseId }: CourseFormProps) => {
                 </Box>
                 <Button disabled={isSubmitting} type={"submit"} variant={"contained"} size={"large"}
                         className={"button col.span-2 w-full"}>
-                    {isSubmitting ? "Submitting..." : `${type} Course`}
+                    {isSubmitting ? "Submitting..." : `${type === "Edit" ? "Save" : type} Course`}
                 </Button>
             </Stack>
         </FormContainer>

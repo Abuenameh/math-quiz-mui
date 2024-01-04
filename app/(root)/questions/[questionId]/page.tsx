@@ -10,6 +10,10 @@ import {Math} from "@/components/Math";
 import {Question} from "@/components/Question";
 import dynamic from "next/dynamic";
 import {currentUser} from "@clerk/nextjs";
+import {getAnswerByQuestionAndUser} from "@/lib/actions/answer.actions";
+import {IAnswer} from "@/lib/database/models/answer.model";
+import {getDeclarationsByQuestion} from "@/lib/actions/declaration.actions";
+import {IDeclaration} from "@/lib/database/models/declaration.model";
 
 const QuestionPage = async ({ params: { questionId } }: SearchParamProps) => {
     const RealtimeComponent = dynamic(() => import("@/components/RealtimeComponent"), {
@@ -20,7 +24,12 @@ const QuestionPage = async ({ params: { questionId } }: SearchParamProps) => {
     const course = topic.course;
 
     const user = await currentUser();
+    const userId = user?.publicMetadata.userId as string;
     // console.log("Clerk user",user)
+
+    console.log("Question page")
+    const declarations = await getDeclarationsByQuestion(questionId) as IDeclaration[];
+    const answer = await getAnswerByQuestionAndUser(questionId, userId) as IAnswer;
 
     return (
 <>
@@ -34,7 +43,7 @@ const QuestionPage = async ({ params: { questionId } }: SearchParamProps) => {
 
     <Box id="events" className="wrapper my-8 flex flex-col gap-8 md:gap-12">
         <RealtimeComponent>
-        <Question question={question} userId={user?.publicMetadata?.userId as string} isAdmin={user?.publicMetadata.isAdmin as boolean || false}/>
+        <Question question={question} declarations={declarations} answer={answer} userId={userId} isAdmin={user?.publicMetadata.isAdmin as boolean || false}/>
         </RealtimeComponent>
     </Box>
 </>

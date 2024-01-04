@@ -1,7 +1,7 @@
 // ====== USER PARAMS
 import {Types} from "mongoose";
 import {IDeclaration} from "@/lib/database/models/declaration.model";
-import {MathfieldElement} from "@abuenameh/mathlive";
+import {MathfieldElement} from "mathlive";
 import {MutableRefObject, RefObject} from "react";
 
 export type CreateUserParams = {
@@ -78,6 +78,8 @@ export type CreateQuestionParams = {
         topic: string
         name: string
         question: string
+        imageUrl?: string
+        imageKey?: string
         showSolution: boolean
     }
     path: string
@@ -88,6 +90,8 @@ export type EditQuestionParams = {
         _id: string
         name: string
         question: string
+        imageUrl?: string
+        imageKey?: string
         showSolution: boolean
     }
     path: string
@@ -258,6 +262,3 @@ export type SearchParamProps = {
 }
 
 export type MathAnswerResults = Map<string, {answer: string, correct: boolean, mark: number}>
-//     {
-//     [key: string]: { answer: string, correct: boolean }
-// }

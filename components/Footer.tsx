@@ -9,7 +9,7 @@ export const Footer = () => {
                     <Image src={"/assets/icons/logo.svg"} width={38} height={38} alt={"Logo"}/>
                 </Link>
 
-                <p>2023 MathQuiz. All rights reserved.</p>
+                <p>2024 MathQuiz. All rights reserved.</p>
             </div>
         </footer>
     );

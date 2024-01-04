@@ -10,7 +10,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import {ICourse} from "@/lib/database/models/course.model";
-import {useCallback} from "react";
+import {useCallback, useState} from "react";
 import {useRouter} from "next/navigation";
 import { Box, Button } from "@mui/material";
 import {confirmDialog} from "@/components/ConfirmDialog";
@@ -23,6 +23,9 @@ import {IDeclaration} from "@/lib/database/models/declaration.model";
 import {ITopic} from "@/lib/database/models/topic.model";
 import {deleteTopic, getTopicsByCourse} from "@/lib/actions/topic.actions";
 import {useUser} from "@clerk/nextjs";
+import {CurrentQuestion} from "@/components/CurrentQuestion";
+import {UploadButton, UploadDropzone} from '@/lib/uploadthing';
+import {FileUploader} from "@/components/FileUploader";
 // import Button from "@mui/material/Button";
 
 function CourseToolbar() {
@@ -74,7 +77,7 @@ export const CourseTable = ({courses}: CourseTableProps) => {
     );
 
     const columns: GridColDef[] = [
-        { field: "code", headerName: "Course code", width: 100 },
+        { field: "code", headerName: "Course code", width: 150 },
         { field: "title", headerName: "Course title", flex: 1 },
         { field: "actions", type: "actions", getActions: (params) => [
                 <GridActionsCellItem key={params.id} label={"Edit"} icon={<EditIcon/>} onClick={onEditClick(params.id)}/>,
@@ -93,7 +96,9 @@ export const CourseTable = ({courses}: CourseTableProps) => {
     };
 
     return (
-            <Box className={"h-96"}>
+        <>
+            <CurrentQuestion />
+            <Box className={"h-[30rem]"}>
         <DataGrid columns={columns} rows={rows} disableRowSelectionOnClick disableColumnFilter disableColumnSelector disableDensitySelector slots={{ toolbar: CourseToolbar }} initialState={{
             filter: {
                 filterModel: {
@@ -101,9 +106,16 @@ export const CourseTable = ({courses}: CourseTableProps) => {
                     quickFilterExcludeHiddenColumns: true,
                 },
             },
+            sorting: { sortModel: [{ field: "code", sort: "asc" }] },
+            // pagination: {
+            //     paginationModel: {
+            //         pageSize: 10,
+            //     },
+            // }
         }} columnVisibilityModel={{
             actions: isAdmin
         }} onRowClick={onRowClick}/>
             </Box>
+            </>
     );
 };

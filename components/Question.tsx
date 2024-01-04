@@ -7,7 +7,7 @@ import * as Ably from "ably";
 import {AblyProvider, useAbly, useChannel} from "ably/react";
 import dynamic from "next/dynamic";
 import Button from "@mui/material/Button";
-import {MathfieldElement} from "@abuenameh/mathlive";
+import {MathfieldElement} from "mathlive";
 import {MathAnswerResults} from "@/types";
 import {Types} from "mongoose";
 import {createAnswer, getAnswerByQuestionAndUser} from "@/lib/actions/answer.actions";
@@ -15,13 +15,19 @@ import {auth, useUser} from "@clerk/nextjs";
 import {IAnswer} from "@/lib/database/models/answer.model";
 import {useRouter} from "next/navigation";
 import {MathAnswer} from "@/components/MathAnswer";
-import {editQuestion, getQuestionById} from "@/lib/actions/question.actions";
+import {editQuestion, getQuestionById, setCurrentQuestion} from "@/lib/actions/question.actions";
 import {Box, CircularProgress} from "@mui/material";
+import {CurrentQuestion} from "@/components/CurrentQuestion";
+import Image from "next/image";
+import {getDeclarationsByQuestion} from "@/lib/actions/declaration.actions";
+import {IDeclaration} from "@/lib/database/models/declaration.model";
+// import {ComputeEngine} from "compute-engine";
+import "compute-engine";
 
 export const SolutionContext = createContext(false);
 
 
-export const Question = ({ question, userId, isAdmin }: { question: IQuestion, userId: string, isAdmin: boolean }) => {
+export const Question = ({ question, declarations, answer, userId, isAdmin }: { question: IQuestion, declarations: IDeclaration[], answer: IAnswer, userId: string, isAdmin: boolean }) => {
     const [loaded, setLoaded] = useState(false);
     const [responses, setResponses] = useState<MathAnswerResults>(new Map());
     const [savedResponses, setSavedResponses] = useState<MathAnswerResults>(new Map());
@@ -32,7 +38,8 @@ export const Question = ({ question, userId, isAdmin }: { question: IQuestion, u
     const [answered, setAnswered] = useState(false);
     const router = useRouter();
 
-    console.log("loaded", loaded,isLoaded)
+    MathfieldElement.computeEngine?.pushScope();
+    MathfieldElement.computeEngine?.declare("P","Predicates")
 
     const { channel: showSolutionChannel } = useChannel("show-solution", (message: Ably.Types.Message) => {
         const fetchShowSolution = async () => {
@@ -53,34 +60,110 @@ export const Question = ({ question, userId, isAdmin }: { question: IQuestion, u
     // const userId = user?.publicMetadata.userId as string;
     // const isAdmin = user?.publicMetadata.isAdmin as boolean || false;
 
-    useEffect(() => {
-        const fetchAnswer = async () => {
-            const answer = await getAnswerByQuestionAndUser(question._id.toString("hex"), userId) as IAnswer;
-            console.log("answer",answer)
-            if (answer) {
-                const responseMap: MathAnswerResults = new Map();
-                const savedResponseMap: MathAnswerResults = new Map();
-                Object.entries(answer.answers).forEach(([key, value]) => {
-                    responseMap.set(key, {answer: value.answer, correct: value.correct, mark: value.mark});
-                    savedResponseMap.set(key, {answer: value.answer, correct: value.correct, mark: value.mark});
-                })
-                // console.log(savedResponses)
-                // console.log(savedResponseMap)
-                setResponses(responseMap);
-                setSavedResponses(savedResponseMap);
-                setAnswered(true)
-            }
-            setLoaded(true)
+    if (!loaded) {
+        if (answer) {
+            const responseMap: MathAnswerResults = new Map();
+            const savedResponseMap: MathAnswerResults = new Map();
+            Object.entries(answer.answers).forEach(([key, value]) => {
+                responseMap.set(key, {answer: value.answer, correct: value.correct, mark: value.mark});
+                savedResponseMap.set(key, {answer: value.answer, correct: value.correct, mark: value.mark});
+            })
+            // console.log(savedResponses)
+            // console.log(savedResponseMap)
+            setResponses(responseMap);
+            setSavedResponses(savedResponseMap);
+            setAnswered(true)
         }
-        fetchAnswer().catch(console.error);
-    }, [question._id, userId])
 
-    console.log(question)
+        const ce = MathfieldElement.computeEngine;
+        console.log("ce", declarations)
+        // if (!ce) return;
+        if (ce) {
+            ce.pushScope();
+            declarations.forEach((declaration) => {
+                // console.log("declaration", declaration)
+                // try {
+                // @ts-ignore
+                ce.declare(declaration.symbol, declaration.domain);
+                // ce.assume(["Element", "P", "Integers"])
+                // console.log(ce.assumptions)
+                // }
+                // catch (e) {
+                //     console.error(e)
+                // }
+            })
+        }
+
+        setLoaded(true);
+    }
+
+    // useEffect(() => {
+    //     const fetchAnswer = async () => {
+    //         const answer = await getAnswerByQuestionAndUser(question._id.toString("hex"), userId) as IAnswer;
+    //         // console.log("answer",answer)
+    //         if (answer) {
+    //             const responseMap: MathAnswerResults = new Map();
+    //             const savedResponseMap: MathAnswerResults = new Map();
+    //             Object.entries(answer.answers).forEach(([key, value]) => {
+    //                 responseMap.set(key, {answer: value.answer, correct: value.correct, mark: value.mark});
+    //                 savedResponseMap.set(key, {answer: value.answer, correct: value.correct, mark: value.mark});
+    //             })
+    //             // console.log(savedResponses)
+    //             // console.log(savedResponseMap)
+    //             setResponses(responseMap);
+    //             setSavedResponses(savedResponseMap);
+    //             setAnswered(true)
+    //         }
+    //         setLoaded(true)
+    //     }
+    //
+    //     const makeDeclarations = async () => {
+    //         const ce = MathfieldElement.computeEngine;
+    //         // const ce2 = new ComputeEngine();
+    //         // console.log(ce2.declare("M","Integers"));
+    //         // console.log(ce2.assume(["Element","L","Integers"]))
+    //         // console.log("ce2", ce2.assumptions)
+    //         // console.log(ce2?.context?.ids)
+    //         if (!ce) return;
+    //         ce.pushScope();
+    //         // ce?.forget(undefined);
+    //         const declarations = await getDeclarationsByQuestion(question._id.toString("hex")) as IDeclaration[];
+    //         // console.log("declarations", declarations)
+    //         // ce.assume(["Element", "P", "Predicates"])
+    //         // ce.assume(["Element", "x", "Booleans"])
+    //         // const qwe = "Q(x)"
+    //         // console.log(ce.parse(qwe))
+    //         // console.log(ce.parse(qwe).toString())
+    //         console.log(ce.context?.ids)
+    //         declarations.forEach((declaration) => {
+    //             // console.log("declaration", declaration)
+    //             // try {
+    //             // @ts-ignore
+    //             // ce.declare(declaration.symbol, declaration.domain);
+    //             // ce.assume(["Element", "P", "Integers"])
+    //             // console.log(ce.assumptions)
+    //             // }
+    //             // catch (e) {
+    //             //     console.error(e)
+    //             // }
+    //         })
+    //         console.log("Question assumptions", ce.assumptions)
+    //     }
+    //
+    //     fetchAnswer().then(makeDeclarations).catch(console.error);
+    //
+    //     return () => {
+    //         MathfieldElement.computeEngine?.popScope();
+    //     }
+    // }, [question._id, userId])
+
+    // console.log(question)
 
     const onSubmit = async () => {
-        console.log("onSubmit")
+        console.log("onSubmit", document.hasFocus())
         if (submitted || savedResponses.size > 0) return;
         setSubmitted(true)
+        if (isAdmin || !document.hasFocus()) return;
         setSavedResponses(new Map(responses));
         await createAnswer({answer: {answers: responses, question: question._id.toString("hex"), user: userId}, path: ""});
     }
@@ -92,21 +175,24 @@ export const Question = ({ question, userId, isAdmin }: { question: IQuestion, u
     }
 
     const onShowSolution = () => {
+        console.log("onShowSolution")
         if (submitted) return;
         setSubmitted(true);
-        editQuestion({question: { _id: question._id.toString("hex"), name: question.name, question: question.question, showSolution: true}, path: ""}).catch(console.error);
+        editQuestion({question: { ...question, _id: question._id.toString("hex"), showSolution: true}, path: ""}).catch(console.error);
         showSolutionChannel.publish({}).catch(console.error);
     }
 
     return (
         <>
-            {/*<RealtimeComponent>*/}
+            <CurrentQuestion />
             {loaded ?
+                <>
+                {question.imageUrl && <div className={""}><Image src={question.imageUrl!} alt={"question image"} width={250} height={250} className={"w-full max-h-96 object-contain object-center"}/></div>}
                 <Math text={question.question} responses={responses} savedResponses={savedResponses} submitted={submitted} showSolution={showSolution} isAdmin={isAdmin} updateResponse={updateResponse}></Math>
+                </>
                 :
                 <Box className={"text-center"}><CircularProgress /></Box>
             }
-            {/*</RealtimeComponent>*/}
             {loaded && isAdmin ?
                 <Button variant={"contained"} disabled={submitted} onClick={onShowSolution}>Show Solution</Button>
             : loaded &&

@@ -37,12 +37,16 @@ export async function getDeclarationsByQuestion(questionId: string) {
         await connectToDatabase()
 
         const conditions = { question: questionId }
+        console.log("Here 1")
 
         const declarationsQuery = Declaration.find(conditions)
             .sort({ symbol: 'asc' })
             .populate<{question: IQuestion}>({path: "question", model: Question})
+        console.log("Here 2")
 
         const declarations = await declarationsQuery;
+        console.log("Here 3")
+        console.log(declarations)
 
         return JSON.parse(JSON.stringify(declarations));
     } catch (error) {
