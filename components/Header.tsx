@@ -12,8 +12,11 @@ import Box from "@mui/material/Box";
 import {OurFileRouter} from "@/app/api/uploadthing/core";
 import { UploadButton } from "@uploadthing/react";
 
-export const Header = () => {
-    return (
+export const Header = async () => {
+    const user = await currentUser();
+    const isPowerPoint = user?.publicMetadata.isPowerPoint as boolean || false;
+
+    return (!isPowerPoint &&
         <header className={"w-full border-b"}>
             <div className={"wrapper flex items-center justify-between"}>
                 <Link href={"/"} className={"flex-1"}>

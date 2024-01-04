@@ -5,6 +5,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { UploadButton, generateComponents } from "@uploadthing/react";
 import {OurFileRouter} from "@/app/api/uploadthing/core";
+import {HomePage} from "@/components/HomePage";
 
 export default function Home() {
     return (
@@ -12,9 +13,10 @@ export default function Home() {
             <CurrentQuestion />
         <main>
             <section>
-                <div className={"wrapper text-center mt-10"}>
-                    <Typography color={"primary"} fontSize={"2rem"}>No current question</Typography>
-                </div>
+                <HomePage/>
+                {/*<div className={"wrapper text-center mt-10"}>*/}
+                {/*    <Typography color={"primary"} fontSize={"2rem"}>No active question</Typography>*/}
+                {/*</div>*/}
                 {/*<SolutionVisibility/>*/}
                 {/*<Math text={"Testing $5 ‵\\sin(x)′ ‵s^2′ ‵‷2s^2‴′ ‵‷‴′ ‶‷2s^2‴″"} />*/}
             </section>

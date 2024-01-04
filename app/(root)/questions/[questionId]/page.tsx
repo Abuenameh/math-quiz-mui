@@ -43,7 +43,7 @@ const QuestionPage = async ({ params: { questionId } }: SearchParamProps) => {
 
     <Box id="events" className="wrapper my-8 flex flex-col gap-8 md:gap-12">
         <RealtimeComponent>
-        <Question question={question} declarations={declarations} answer={answer} userId={userId} isAdmin={user?.publicMetadata.isAdmin as boolean || false}/>
+        <Question question={question} declarations={declarations} answer={answer} userId={userId} isAdmin={user?.publicMetadata.isAdmin as boolean || false} isPowerPoint={user?.publicMetadata.isPowerPoint as boolean || false}/>
         </RealtimeComponent>
     </Box>
 </>

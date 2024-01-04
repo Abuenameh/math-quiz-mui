@@ -27,7 +27,7 @@ import "compute-engine";
 export const SolutionContext = createContext(false);
 
 
-export const Question = ({ question, declarations, answer, userId, isAdmin }: { question: IQuestion, declarations: IDeclaration[], answer: IAnswer, userId: string, isAdmin: boolean }) => {
+export const Question = ({ question, declarations, answer, userId, isAdmin, isPowerPoint }: { question: IQuestion, declarations: IDeclaration[], answer: IAnswer, userId: string, isAdmin: boolean, isPowerPoint: boolean }) => {
     const [loaded, setLoaded] = useState(false);
     const [responses, setResponses] = useState<MathAnswerResults>(new Map());
     const [savedResponses, setSavedResponses] = useState<MathAnswerResults>(new Map());
@@ -163,7 +163,7 @@ export const Question = ({ question, declarations, answer, userId, isAdmin }: { 
         console.log("onSubmit", document.hasFocus())
         if (submitted || savedResponses.size > 0) return;
         setSubmitted(true)
-        if (isAdmin || !document.hasFocus()) return;
+        if (isAdmin || isPowerPoint || !document.hasFocus()) return;
         setSavedResponses(new Map(responses));
         await createAnswer({answer: {answers: responses, question: question._id.toString("hex"), user: userId}, path: ""});
     }
@@ -188,15 +188,15 @@ export const Question = ({ question, declarations, answer, userId, isAdmin }: { 
             {loaded ?
                 <>
                 {question.imageUrl && <div className={""}><Image src={question.imageUrl!} alt={"question image"} width={250} height={250} className={"w-full max-h-96 object-contain object-center"}/></div>}
-                <Math text={question.question} responses={responses} savedResponses={savedResponses} submitted={submitted} showSolution={showSolution} isAdmin={isAdmin} updateResponse={updateResponse}></Math>
+                <Math text={question.question} responses={responses} savedResponses={savedResponses} submitted={submitted} showSolution={showSolution} isAdmin={isAdmin} isPowerPoint={isPowerPoint} updateResponse={updateResponse}></Math>
                 </>
                 :
                 <Box className={"text-center"}><CircularProgress /></Box>
             }
-            {loaded && isAdmin ?
+            {!isPowerPoint && (loaded && isAdmin ?
                 <Button variant={"contained"} disabled={submitted} onClick={onShowSolution}>Show Solution</Button>
             : loaded &&
-            <Button variant={"contained"} disabled={submitted || answered} onClick={onSubmit}>{submitted || answered ? "Submitted" : "Submit Answer"}</Button>
+            <Button variant={"contained"} disabled={submitted || answered} onClick={onSubmit}>{submitted || answered ? "Submitted" : "Submit Answer"}</Button>)
             }
         </>
     );

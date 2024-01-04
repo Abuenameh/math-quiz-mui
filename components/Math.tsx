@@ -26,10 +26,11 @@ type MathProps = {
     submitted: boolean
     showSolution: boolean
     isAdmin: boolean
+    isPowerPoint: boolean
     updateResponse: (id: string, response: string, correct: boolean, mark: number) => void
 }
 
-function toMath({text, responses, savedResponses, submitted, showSolution, isAdmin, updateResponse}: MathProps) {
+function toMath({text, responses, savedResponses, submitted, showSolution, isAdmin, isPowerPoint, updateResponse}: MathProps) {
     return regexifyString({
         pattern: /⟬([^⟦][^⟭]*)⟭|⦗([^⟦][^⦘]*)⦘|⟬⟦([^,]+),(\d+)⟧([^⟭]*)⟭|⦗⟦([^,]+),(\d+)⟧([^⦘]*)⦘/gm,
         decorator: (match, index, result) => {
@@ -55,6 +56,7 @@ function toMath({text, responses, savedResponses, submitted, showSolution, isAdm
                     hasSavedResponse: response !== undefined,
                     correct: responses?.get(id)?.correct || false,
                     isAdmin: isAdmin,
+                    isPowerPoint: isPowerPoint,
                     updateResponse: updateResponse
                 }
                 return <MathAnswer key={index} {...props} />
@@ -75,6 +77,7 @@ function toMath({text, responses, savedResponses, submitted, showSolution, isAdm
                     hasSavedResponse: response !== undefined,
                     correct: responses?.get(id)?.correct || false,
                     isAdmin: isAdmin,
+                    isPowerPoint: isPowerPoint,
                     updateResponse: updateResponse
                 }
                 return <MathAnswer key={index} {...props} />

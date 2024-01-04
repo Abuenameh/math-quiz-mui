@@ -20,10 +20,11 @@ export type MathAnswerProps = {
     hasSavedResponse: boolean
     correct: boolean
     isAdmin: boolean
+    isPowerPoint: boolean
     updateResponse: (id: string, response: string, correct: boolean, mark: number) => void
 }
 
-export const MathAnswer = ( { display, id, answer, mark, response, submitted, showSolution, hasSavedResponse, correct, isAdmin, updateResponse }: MathAnswerProps ) => {
+export const MathAnswer = ( { display, id, answer, mark, response, submitted, showSolution, hasSavedResponse, correct, isAdmin, isPowerPoint, updateResponse }: MathAnswerProps ) => {
     const boxRef = useRef<HTMLDivElement>(null);
     const responseRef = useRef<MathfieldElement>(null);
     const answerRef = useRef<MathfieldElement>(null);
@@ -36,15 +37,15 @@ export const MathAnswer = ( { display, id, answer, mark, response, submitted, sh
         }
     }, [correct, id, mark, response, updateResponse])
 
-    const editable = !submitted && !hasSavedResponse && !isAdmin;
+    const editable = !submitted && !hasSavedResponse && !isAdmin && !isPowerPoint;
     const actuallyShowSolution =  (submitted || hasSavedResponse) && showSolution;
     // console.log("actuallyShowSolution", actuallyShowSolution, submitted, hasSavedResponse, showSolution)
 
     // console.log("response", response, responseRef)
     const responseStyle ={
-        display: (submitted && isAdmin) ? "none" : display,
-        width: (display === "inline-block") && (editable || isAdmin) ? "5em" : "auto",
-        height: (display === "block") && (editable || isAdmin) ? "5em" : "auto",
+        display: (submitted && (isAdmin || isPowerPoint)) ? "none" : display,
+        width: (display === "inline-block") && (editable || isAdmin || isPowerPoint) ? "5em" : "auto",
+        height: (display === "block") && (editable || isAdmin || isPowerPoint) ? "5em" : "auto",
         // marginTop: display === "block" ? "1em" : "auto",
         color: actuallyShowSolution ? (correct ? "black" : "black") : "auto",
         backgroundColor: actuallyShowSolution ? (correct ? "#81c784" : "#e57373") : "auto",
@@ -67,7 +68,7 @@ export const MathAnswer = ( { display, id, answer, mark, response, submitted, sh
 
     return (
         <>
-            <Box className={`${display} ${display === "block" ? "mt-5" : ""} ${!isAdmin ? "border-2 p-2 bg-gray-100" : ""}`}>
+            <Box className={`${display} ${display === "block" ? "mt-5" : ""} ${!isAdmin && !isPowerPoint ? "border-2 p-2 bg-gray-100" : ""}`}>
                 {/*<TextField value={responseRef.current?.expression}></TextField>*/}
             {editable ?
                 <math-field ref={responseRef} style={responseStyle} onInput={onChange}
