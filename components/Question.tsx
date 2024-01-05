@@ -23,6 +23,8 @@ import {getDeclarationsByQuestion} from "@/lib/actions/declaration.actions";
 import {IDeclaration} from "@/lib/database/models/declaration.model";
 // import {ComputeEngine} from "compute-engine";
 import "compute-engine";
+// import {useChannels} from "@/components/ChannelProvider";
+import message from "ably/src/common/lib/types/message";
 
 export const SolutionContext = createContext(false);
 
@@ -38,8 +40,8 @@ export const Question = ({ question, declarations, answer, userId, isAdmin, isPo
     const [answered, setAnswered] = useState(false);
     const router = useRouter();
 
-    MathfieldElement.computeEngine?.pushScope();
-    MathfieldElement.computeEngine?.declare("P","Predicates")
+    // MathfieldElement.computeEngine?.pushScope();
+    // MathfieldElement.computeEngine?.declare("P","Predicates")
 
     const { channel: showSolutionChannel } = useChannel("show-solution", (message: Ably.Types.Message) => {
         const fetchShowSolution = async () => {
@@ -55,6 +57,29 @@ export const Question = ({ question, declarations, answer, userId, isAdmin, isPo
 
         fetchShowSolution().catch(console.error);
     })
+
+    // const channels = useChannels()
+
+    // useEffect(() => {
+    //     channels.solution?.channel.subscribe((message) => {
+    //             const fetchShowSolution = async () => {
+    //                 const updatedQuestion = await getQuestionById(question._id.toString("hex"));
+    //                 console.log(question, updatedQuestion)
+    //                 if (updatedQuestion) {
+    //                     if ((!question.showSolution || !submitted) && updatedQuestion.showSolution) {
+    //                         onSubmit().catch(console.error);
+    //                     }
+    //                     setShowSolution(updatedQuestion.showSolution);
+    //                 }
+    //             }
+    //
+    //             fetchShowSolution().catch(console.error);
+    //     })
+    //
+    //     return () => {
+    //         channels.solution?.channel.unsubscribe();
+    //     }
+    // }, [])
 
     // console.log("user",user)
     // const userId = user?.publicMetadata.userId as string;
@@ -179,6 +204,7 @@ export const Question = ({ question, declarations, answer, userId, isAdmin, isPo
         if (submitted) return;
         setSubmitted(true);
         editQuestion({question: { ...question, _id: question._id.toString("hex"), showSolution: true}, path: ""}).catch(console.error);
+        // channels.solution?.channel?.publish({}).catch(console.error);
         showSolutionChannel.publish({}).catch(console.error);
     }
 

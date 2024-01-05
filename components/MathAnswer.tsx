@@ -2,8 +2,8 @@ import {ChangeEvent, Key, MutableRefObject, RefObject, useContext, useEffect, us
 import Box from "@mui/material/Box";
 import {MathfieldElement} from "mathlive";
 import {SolutionContext} from "@/components/Question";
-import {useAbly, useChannel} from "ably/react";
-import * as Ably from "ably"
+// import {useAbly, useChannel} from "ably/react";
+// import * as Ably from "ably"
 import {MathAnswerResults} from "@/types";
 import {CircularProgress, Container, Skeleton, TextField} from "@mui/material";
 import Typography from "@mui/material/Typography";

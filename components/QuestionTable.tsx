@@ -26,6 +26,7 @@ import {IDeclaration} from "@/lib/database/models/declaration.model";
 import {useUser} from "@clerk/nextjs";
 import {CurrentQuestion} from "@/components/CurrentQuestion";
 import {deleteAnswersByQuestion} from "@/lib/actions/answer.actions";
+import {useChannels} from "@/components/ChannelProvider";
 
 function QuestionToolbar() {
     const router = useRouter();
@@ -52,6 +53,8 @@ export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
     const router = useRouter();
     const { user } = useUser();
     const { channel: currentQuestionChannel } = useChannel("current-question");
+
+    // const channels = useChannels();
 
     // const userId = user?.publicMetadata.userId as string;
     const isAdmin = user?.publicMetadata.isAdmin as boolean || false;
@@ -113,7 +116,12 @@ export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
         if (isAdmin) {
             console.log("Setting current question")
             await setCurrentQuestion(params.id.toString())
-            await currentQuestionChannel.publish({})
+            try {
+                // channels.question?.channel?.publish({})
+                await currentQuestionChannel.publish({})
+            } catch (e) {
+                console.error(e)
+            }
         }
 
         router.push(`/questions/${params.id}`);

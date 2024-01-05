@@ -14,6 +14,8 @@ import dynamic from "next/dynamic";
 import { NextSSRPlugin } from '@uploadthing/react/next-ssr-plugin';
 import {ourFileRouter} from "@/app/api/uploadthing/core";
 import { extractRouterConfig } from 'uploadthing/server';
+// import {useChannel} from "ably/react";
+import {ChannelProvider} from "@/components/ChannelProvider";
 
 export const metadata: Metadata = {
   title: 'MathQuiz',
@@ -51,6 +53,7 @@ export default function RootLayout({
           routerConfig={extractRouterConfig(ourFileRouter)}
       />
       <RealtimeComponent>
+        {/*<ChannelProvider>*/}
       <CssBaseline enableColorScheme />
       <AppRouterCacheProvider>
         <ThemeRegistry options={{ key: 'mui' }}>
@@ -58,6 +61,7 @@ export default function RootLayout({
       {children}
       </ThemeRegistry>
       </AppRouterCacheProvider>
+        {/*</ChannelProvider>*/}
       </RealtimeComponent>
       </body>
     </html>
