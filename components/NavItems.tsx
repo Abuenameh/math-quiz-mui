@@ -3,7 +3,6 @@
 import NextLink from "next/link";
 import {usePathname} from "next/navigation";
 import {Link} from "@mui/material";
-import {useUser} from "@clerk/nextjs";
 
 export const headerLinks = [
     {
@@ -22,9 +21,6 @@ export const headerLinks = [
 
 export const NavItems = () => {
     const pathname = usePathname();
-    const { user } = useUser();
-
-    const isAdmin = user?.publicMetadata.isAdmin as boolean || false;
 
     return (
         <ul className={"md:flex-between flex w-full flex-col items-start gap-5 md:flex-row"}>

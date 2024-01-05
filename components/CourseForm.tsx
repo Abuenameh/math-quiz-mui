@@ -7,7 +7,6 @@ import Stack from "@mui/material/Stack";
 import { useRouter } from "next/navigation";
 import {createCourse, editCourse} from "@/lib/actions/course.actions";
 import Box from "@mui/material/Box";
-import {Types} from "mongoose";
 import {useUser} from "@clerk/nextjs";
 import {CurrentQuestion} from "@/components/CurrentQuestion";
 
@@ -31,7 +30,6 @@ export const CourseForm = ({ type, course, courseId }: CourseFormProps) => {
             title: course?.title || "",
         },
     });
-    const { reset} = formContext;
     const { isSubmitting } = useFormState(formContext);
 
     const isAdmin = user?.publicMetadata.isAdmin as boolean || false;
@@ -50,7 +48,6 @@ export const CourseForm = ({ type, course, courseId }: CourseFormProps) => {
                 });
 
                 if (newCourse) {
-                    // reset();
                     router.push(`/courses/${newCourse._id}`);
                 }
             } catch (error) {
@@ -71,9 +68,7 @@ export const CourseForm = ({ type, course, courseId }: CourseFormProps) => {
                 });
 
                 if (editedCourse) {
-                    // reset();
                     router.back();
-                    // router.push(`/courses/${editedCourse._id}`);
                 }
             } catch (error) {
                 console.log(error)

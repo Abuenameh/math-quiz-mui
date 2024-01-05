@@ -1,20 +1,14 @@
 'use server'
 
 import {
-    CreateCourseParams,
-    CreateQuestionParams, CreateTopicParams,
-    DeleteQuestionParams, DeleteTopicParams,
-    EditCourseParams,
-    EditQuestionParams, EditTopicParams
+    CreateTopicParams,
+    DeleteTopicParams,
+    EditTopicParams
 } from "@/types";
 import {connectToDatabase} from "@/lib/database";
 import Course, {ICourse} from "@/lib/database/models/course.model";
 import {revalidatePath} from "next/cache";
 import {handleError} from "@/lib/utils";
-import Question from "@/lib/database/models/question.model";
-import {Types} from "mongoose";
-import Declaration, {IDeclaration} from "@/lib/database/models/declaration.model";
-import {createDeclaration, deleteDeclaration} from "@/lib/actions/declaration.actions";
 import Topic from "@/lib/database/models/topic.model";
 
 export const createTopic = async ({ topic, path }: CreateTopicParams) => {

@@ -24,7 +24,6 @@ export const TopicMarksTable = ({marks}: { marks: MarkStats[] }) => {
             <DataGrid getRowHeight={() => 'auto'} sx={{"& .MuiDataGrid-row:hover": {cursor: "default", background: "transparent"}, "& .MuiDataGrid-row.Mui-hovered": {background: "transparent"}}} columns={columns} rows={rows} disableRowSelectionOnClick disableColumnFilter disableColumnSelector disableDensitySelector
             initialState={{
                 sorting: { sortModel: [{ field: "name", sort: "asc" }] },
-            //     pagination: { paginationModel: { pageSize: 10 } },
             }}
             />
             </Box>

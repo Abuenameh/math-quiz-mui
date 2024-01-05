@@ -3,12 +3,9 @@
 import {InlineMath, BlockMath} from "react-katex";
 import regexifyString from "regexify-string";
 import "mathlive";
-// import "compute-engine"
 import {MathfieldElement} from "mathlive";
 import {MathAnswer, MathAnswerProps} from "@/components/MathAnswer";
 import Box from "@mui/material/Box";
-import {useAbly} from "ably/react";
-import {MutableRefObject, RefObject} from "react";
 import {MathAnswerResults} from "@/types";
 
 declare global {
@@ -43,7 +40,6 @@ function toMath({text, responses, savedResponses, submitted, showSolution, isAdm
             else if (result?.[5] !== undefined) {
                 const id = result?.[3] || index.toString();
                 const response = savedResponses?.get(id)?.answer;
-                // const responseCorrect = savedResponses?.get(id)?.correct || false;
                 const props: MathAnswerProps = {
                     display: "inline-block",
                     id: id,
@@ -64,7 +60,6 @@ function toMath({text, responses, savedResponses, submitted, showSolution, isAdm
             else if (result?.[8] !== undefined) {
                 const id = result?.[6] || index.toString();
                 const response = savedResponses?.get(id)?.answer;
-                // const responseCorrect = savedResponses?.get(id)?.correct || false;
                 const props: MathAnswerProps = {
                     display: "block",
                     id: id,

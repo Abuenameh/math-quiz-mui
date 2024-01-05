@@ -1,6 +1,4 @@
 import {model, models, Schema, Types} from "mongoose";
-import {IDeclaration} from "@/lib/database/models/declaration.model";
-import {ICourse} from "@/lib/database/models/course.model";
 import {ITopic} from "@/lib/database/models/topic.model";
 
 export interface IQuestion {

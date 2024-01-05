@@ -1,16 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
 import {currentUser, SignedIn, SignedOut, UserButton} from "@clerk/nextjs";
-// import {Button} from "@mui/material";
 import Button from "@mui/material/Button";
 import {NavItems} from "@/components/NavItems";
 import {MobileNav} from "@/components/MobileNav";
-import {CurrentQuestion} from "@/components/CurrentQuestion";
-import {useParams, useSearchParams} from "next/navigation";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import {OurFileRouter} from "@/app/api/uploadthing/core";
-import { UploadButton } from "@uploadthing/react";
 
 export const Header = async () => {
     const user = await currentUser();

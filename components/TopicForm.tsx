@@ -1,13 +1,10 @@
 'use client'
 
-import {ICourse} from "@/lib/database/models/course.model";
 import {FormContainer, TextFieldElement, useForm, useFormState} from "react-hook-form-mui";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import { useRouter } from "next/navigation";
-import {createCourse, editCourse} from "@/lib/actions/course.actions";
 import Box from "@mui/material/Box";
-import {Types} from "mongoose";
 import {createTopic, editTopic} from "@/lib/actions/topic.actions";
 import {ITopic} from "@/lib/database/models/topic.model";
 import {useUser} from "@clerk/nextjs";
@@ -36,7 +33,6 @@ export const TopicForm = ({ type, courseId, topic, topicId }: TopicFormProps) =>
             description: topic?.description || "",
         },
     });
-    const { reset} = formContext;
     const { isSubmitting } = useFormState(formContext);
 
     const isAdmin = user?.publicMetadata.isAdmin as boolean || false;
@@ -55,7 +51,6 @@ export const TopicForm = ({ type, courseId, topic, topicId }: TopicFormProps) =>
                 });
 
                 if (newTopic) {
-                    // reset();
                     router.push(`/courses/${courseId}`);
                 }
             } catch (error) {
@@ -76,9 +71,7 @@ export const TopicForm = ({ type, courseId, topic, topicId }: TopicFormProps) =>
                 });
 
                 if (editedTopic) {
-                    // reset();
                     router.back();
-                    // router.push(`/courses/${editedCourse._id}`);
                 }
             } catch (error) {
                 console.log(error)

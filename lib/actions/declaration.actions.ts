@@ -1,30 +1,19 @@
 'use server'
 
 import {
-    CreateCourseParams, CreateDeclarationParams,
-    CreateQuestionParams, DeleteCourseParams, DeleteDeclarationParams,
-    DeleteQuestionParams,
-    EditCourseParams,
-    EditQuestionParams
+    CreateDeclarationParams,
+    DeleteDeclarationParams,
 } from "@/types";
 import {connectToDatabase} from "@/lib/database";
-import Course, {ICourse} from "@/lib/database/models/course.model";
-import {revalidatePath} from "next/cache";
 import {handleError} from "@/lib/utils";
 import Question, {IQuestion} from "@/lib/database/models/question.model";
-import {Types} from "mongoose";
 import Declaration from "@/lib/database/models/declaration.model";
 
 export const createDeclaration = async ({ declaration }: CreateDeclarationParams) => {
     try {
         await connectToDatabase();
 
-        // const course = await Course.findById(question.courseId)
-        // if (!course) throw new Error('Course not found')
-
         const newDeclaration = await Declaration.create({...declaration});
-        // const newDeclaration = await Declaration.create({symbol: declaration.symbol, domain: declaration.domain, question: declaration.question});
-        // revalidatePath(path)
 
         return JSON.parse(JSON.stringify(newDeclaration));
     } catch (error) {
@@ -37,16 +26,12 @@ export async function getDeclarationsByQuestion(questionId: string) {
         await connectToDatabase()
 
         const conditions = { question: questionId }
-        console.log("Here 1")
 
         const declarationsQuery = Declaration.find(conditions)
             .sort({ symbol: 'asc' })
             .populate<{question: IQuestion}>({path: "question", model: Question})
-        console.log("Here 2")
 
         const declarations = await declarationsQuery;
-        console.log("Here 3")
-        console.log(declarations)
 
         return JSON.parse(JSON.stringify(declarations));
     } catch (error) {
@@ -58,7 +43,7 @@ export async function deleteDeclaration({ declarationId }: DeleteDeclarationPara
     try {
         await connectToDatabase()
 
-        const deletedDeclaration = await Declaration.findByIdAndDelete(declarationId)
+        await Declaration.findByIdAndDelete(declarationId)
         // if (deletedDeclaration) revalidatePath(path)
     } catch (error) {
         handleError(error)

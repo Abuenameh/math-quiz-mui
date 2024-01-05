@@ -1,9 +1,8 @@
 'use server'
 
 
-import {CreateAnswerParams, CreateDeclarationParams} from "@/types";
+import {CreateAnswerParams} from "@/types";
 import {connectToDatabase} from "@/lib/database";
-import Declaration, {IDeclaration} from "@/lib/database/models/declaration.model";
 import {handleError} from "@/lib/utils";
 import Answer from "@/lib/database/models/answer.model";
 import {Types} from "mongoose";
@@ -14,9 +13,6 @@ import {ITopic} from "@/lib/database/models/topic.model";
 export const createAnswer = async ({ answer }: CreateAnswerParams) => {
     try {
         await connectToDatabase();
-
-        // const course = await Course.findById(question.courseId)
-        // if (!course) throw new Error('Course not found')
 
         const answerMap = new Types.Map<{answer: string, correct: boolean, mark: number}>();
         answer.answers.forEach((value, key) => {
@@ -56,10 +52,6 @@ export async function getAnswerByQuestionAndUser(questionId: string, userId: str
 
         const answer = await Answer.findOne(conditions);
 
-        // if (!answer) {
-        //     throw new Error('Answer not found');
-        // }
-
         return JSON.parse(JSON.stringify(answer));
     } catch (error) {
         handleError(error);
@@ -88,12 +80,6 @@ export async function deleteAnswersByQuestion(questionId: string) {
         const conditions = { question: questionId }
 
         await Answer.deleteMany(conditions);
-
-        // if (!answer) {
-        //     throw new Error('Answer not found');
-        // }
-
-        // return JSON.parse(JSON.stringify(answer));
     } catch (error) {
         handleError(error);
     }

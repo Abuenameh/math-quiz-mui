@@ -9,24 +9,17 @@ import {
 } from '@mui/x-data-grid';
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import {ICourse} from "@/lib/database/models/course.model";
 import {useCallback} from "react";
 import {useParams, useRouter} from "next/navigation";
 import { Box, Button } from "@mui/material";
 import {confirmDialog} from "@/components/ConfirmDialog";
-import {deleteCourse, getCourseById} from "@/lib/actions/course.actions";
 import { Add } from '@mui/icons-material';
-import {router} from "next/client";
-import {Types} from "mongoose";
 import {ITopic} from "@/lib/database/models/topic.model";
 import {deleteTopic, getTopicById} from "@/lib/actions/topic.actions";
-import {deleteDeclaration, getDeclarationsByQuestion} from "@/lib/actions/declaration.actions";
-import {IDeclaration} from "@/lib/database/models/declaration.model";
 import {deleteQuestion, getQuestionsByTopic} from "@/lib/actions/question.actions";
 import {IQuestion} from "@/lib/database/models/question.model";
 import {useUser} from "@clerk/nextjs";
 import {CurrentQuestion} from "@/components/CurrentQuestion";
-// import Button from "@mui/material/Button";
 
 function TopicToolbar() {
     const router = useRouter();
@@ -45,11 +38,10 @@ function TopicToolbar() {
 }
 
 interface TopicTableProps {
-    courseId: string
     topics: ITopic[]
 }
 
-export const TopicTable = ({courseId, topics}: TopicTableProps) => {
+export const TopicTable = ({topics}: TopicTableProps) => {
     const router = useRouter();
     const { user } = useUser();
 
@@ -66,7 +58,7 @@ export const TopicTable = ({courseId, topics}: TopicTableProps) => {
         (id: GridRowId) => async () => {
             const topicQuestions = await getQuestionsByTopic(id as string) as IQuestion[];
 
-            topicQuestions.forEach((question, index) => {
+            topicQuestions.forEach((question) => {
                 deleteQuestion({questionId: question._id.toString("hex"), path: ""})
             })
 
@@ -111,11 +103,6 @@ export const TopicTable = ({courseId, topics}: TopicTableProps) => {
                 },
             },
             sorting: { sortModel: [{ field: "num", sort: "asc" }] },
-            // pagination: {
-            //     paginationModel: {
-            //         pageSize: 10,
-            //     },
-            // }
         }} columnVisibilityModel={{
             actions: isAdmin
         }} onRowClick={onRowClick}/>

@@ -8,9 +8,6 @@ import {IAnswer} from "@/lib/database/models/answer.model";
 import {ITopic} from "@/lib/database/models/topic.model";
 import {ICourse} from "@/lib/database/models/course.model";
 import {IQuestion} from "@/lib/database/models/question.model";
-import {GridActionsCellItem, GridColDef} from "@mui/x-data-grid";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import {CourseMarksTable} from "@/components/CourseMarksTable";
 import {TopicMarksTable} from "@/components/TopicMarksTable";
 import {CurrentQuestion} from "@/components/CurrentQuestion";
@@ -54,7 +51,7 @@ export const Statistics = ({ userId }: { userId: string }) => {
                     if (!topicMarks.current.has(topicKey)) {
                         topicMarks.current.set(topicKey, {mark: 0, totalMark: 0, course: course, topic: topic})
                     }
-                    Object.entries(answer.answers).forEach(([key, value]) => {
+                    Object.entries(answer.answers).forEach(([, value]) => {
                         if (value.correct) {
                             mark.current += value.mark;
                             courseMarks.current.get(courseKey)!.mark += value.mark;

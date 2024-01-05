@@ -1,12 +1,7 @@
-import {ChangeEvent, Key, MutableRefObject, RefObject, useContext, useEffect, useRef, useState} from "react";
+import {ChangeEvent, useEffect, useRef} from "react";
 import Box from "@mui/material/Box";
 import {MathfieldElement} from "mathlive";
-import {SolutionContext} from "@/components/Question";
-// import {useAbly, useChannel} from "ably/react";
-// import * as Ably from "ably"
 import {MathAnswerResults} from "@/types";
-import {CircularProgress, Container, Skeleton, TextField} from "@mui/material";
-import Typography from "@mui/material/Typography";
 
 export type MathAnswerProps = {
     display: "inline-block" | "block"
@@ -25,7 +20,6 @@ export type MathAnswerProps = {
 }
 
 export const MathAnswer = ( { display, id, answer, mark, response, submitted, showSolution, hasSavedResponse, correct, isAdmin, isPowerPoint, updateResponse }: MathAnswerProps ) => {
-    const boxRef = useRef<HTMLDivElement>(null);
     const responseRef = useRef<MathfieldElement>(null);
     const answerRef = useRef<MathfieldElement>(null);
     const initializedResponse = useRef(false)
@@ -39,14 +33,11 @@ export const MathAnswer = ( { display, id, answer, mark, response, submitted, sh
 
     const editable = !submitted && !hasSavedResponse && !isAdmin && !isPowerPoint;
     const actuallyShowSolution =  (submitted || hasSavedResponse) && showSolution;
-    // console.log("actuallyShowSolution", actuallyShowSolution, submitted, hasSavedResponse, showSolution)
 
-    // console.log("response", response, responseRef)
     const responseStyle ={
         display: (submitted && (isAdmin || isPowerPoint)) ? "none" : display,
         width: (display === "inline-block") && (editable || isAdmin || isPowerPoint) ? "5em" : "auto",
         height: (display === "block") && (editable || isAdmin || isPowerPoint) ? "5em" : "auto",
-        // marginTop: display === "block" ? "1em" : "auto",
         color: actuallyShowSolution ? (correct ? "black" : "black") : "auto",
         backgroundColor: actuallyShowSolution ? (correct ? "#81c784" : "#e57373") : "auto",
     };
@@ -56,12 +47,8 @@ export const MathAnswer = ( { display, id, answer, mark, response, submitted, sh
         marginTop: display === "block" ? "0.5em" : "auto",
     };
 
-    const onChange = (e: ChangeEvent<MathfieldElement>) => {
-        console.log(responseRef.current?.expression.toString())
-        // console.log("onChange assumptions", MathfieldElement.computeEngine?.context?.ids)
+    const onChange = () => {
         if (responseRef.current && answerRef.current) {
-            // console.log(responseRef.current.expression)
-            // console.log(responseRef.current.expression, answerRef.current.expression)
             updateResponse(id, responseRef.current.getValue(), responseRef.current.expression.simplify().isEqual(answerRef.current.expression.simplify()), mark);
         }
     }
@@ -69,7 +56,6 @@ export const MathAnswer = ( { display, id, answer, mark, response, submitted, sh
     return (
         <>
             <Box className={`${display} ${display === "block" ? "mt-5" : ""} ${!isAdmin && !isPowerPoint ? "border-2 p-2 bg-gray-100" : ""}`}>
-                {/*<TextField value={responseRef.current?.expression}></TextField>*/}
             {editable ?
                 <math-field ref={responseRef} style={responseStyle} onInput={onChange}
                             >{response}</math-field>

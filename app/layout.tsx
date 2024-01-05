@@ -14,8 +14,6 @@ import dynamic from "next/dynamic";
 import { NextSSRPlugin } from '@uploadthing/react/next-ssr-plugin';
 import {ourFileRouter} from "@/app/api/uploadthing/core";
 import { extractRouterConfig } from 'uploadthing/server';
-// import {useChannel} from "ably/react";
-import {ChannelProvider} from "@/components/ChannelProvider";
 
 export const metadata: Metadata = {
   title: 'MathQuiz',

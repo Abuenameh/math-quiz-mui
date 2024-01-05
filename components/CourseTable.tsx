@@ -10,23 +10,16 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import {ICourse} from "@/lib/database/models/course.model";
-import {useCallback, useState} from "react";
+import {useCallback} from "react";
 import {useRouter} from "next/navigation";
 import { Box, Button } from "@mui/material";
 import {confirmDialog} from "@/components/ConfirmDialog";
 import {deleteCourse, getCourseById} from "@/lib/actions/course.actions";
 import { Add } from '@mui/icons-material';
-import {router} from "next/client";
-import {Types} from "mongoose";
-import {deleteDeclaration, getDeclarationsByQuestion} from "@/lib/actions/declaration.actions";
-import {IDeclaration} from "@/lib/database/models/declaration.model";
 import {ITopic} from "@/lib/database/models/topic.model";
 import {deleteTopic, getTopicsByCourse} from "@/lib/actions/topic.actions";
 import {useUser} from "@clerk/nextjs";
 import {CurrentQuestion} from "@/components/CurrentQuestion";
-import {UploadButton, UploadDropzone} from '@/lib/uploadthing';
-import {FileUploader} from "@/components/FileUploader";
-// import Button from "@mui/material/Button";
 
 function CourseToolbar() {
     const router = useRouter();
@@ -64,7 +57,7 @@ export const CourseTable = ({courses}: CourseTableProps) => {
         (id: GridRowId) => async () => {
             const courseTopics = await getTopicsByCourse(id as string) as ITopic[];
 
-            courseTopics.forEach((topic, index) => {
+            courseTopics.forEach((topic) => {
                 deleteTopic({topicId: topic._id.toString("hex"), path: ""})
             })
 
@@ -107,11 +100,6 @@ export const CourseTable = ({courses}: CourseTableProps) => {
                 },
             },
             sorting: { sortModel: [{ field: "code", sort: "asc" }] },
-            // pagination: {
-            //     paginationModel: {
-            //         pageSize: 10,
-            //     },
-            // }
         }} columnVisibilityModel={{
             actions: isAdmin
         }} onRowClick={onRowClick}/>

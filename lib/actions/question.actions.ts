@@ -141,8 +141,6 @@ export async function clearCurrentQuestion() {
     try {
         await connectToDatabase()
 
-        console.log("\n\n\n\nClear current question\n\n\n\n")
-
         await Question.updateMany({ current: true }, { current: false })
     } catch (error) {
         handleError(error)

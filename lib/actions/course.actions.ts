@@ -2,16 +2,13 @@
 
 import {
     CreateCourseParams,
-    GetAllCoursesParams,
     EditCourseParams,
-    DeleteQuestionParams,
     DeleteCourseParams
 } from "@/types";
 import {handleError} from "@/lib/utils";
 import {connectToDatabase} from "@/lib/database";
 import Course from "@/lib/database/models/course.model";
 import {revalidatePath} from "next/cache";
-import {Types} from "mongoose";
 
 export const createCourse = async ({ course, path }: CreateCourseParams) => {
     try {

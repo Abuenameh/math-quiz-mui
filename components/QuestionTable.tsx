@@ -1,7 +1,6 @@
 'use client'
 
-import {ICourse} from "@/lib/database/models/course.model";
-import {useParams, useRouter, useSearchParams} from "next/navigation";
+import {useParams, useRouter} from "next/navigation";
 import {useCallback} from "react";
 import {
     DataGrid,
@@ -12,21 +11,18 @@ import {
     GridToolbarContainer, GridToolbarQuickFilter
 } from "@mui/x-data-grid";
 import {confirmDialog} from "@/components/ConfirmDialog";
-import {deleteCourse} from "@/lib/actions/course.actions";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {Box, Button} from "@mui/material";
 import {IQuestion} from "@/lib/database/models/question.model";
 import {Add} from "@mui/icons-material";
 import {deleteQuestion, getQuestionById, setCurrentQuestion} from "@/lib/actions/question.actions";
-import {Types} from "mongoose";
 import {useChannel} from "ably/react";
 import {deleteDeclaration, getDeclarationsByQuestion} from "@/lib/actions/declaration.actions";
 import {IDeclaration} from "@/lib/database/models/declaration.model";
 import {useUser} from "@clerk/nextjs";
 import {CurrentQuestion} from "@/components/CurrentQuestion";
 import {deleteAnswersByQuestion} from "@/lib/actions/answer.actions";
-import {useChannels} from "@/components/ChannelProvider";
 
 function QuestionToolbar() {
     const router = useRouter();
@@ -54,9 +50,6 @@ export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
     const { user } = useUser();
     const { channel: currentQuestionChannel } = useChannel("current-question");
 
-    // const channels = useChannels();
-
-    // const userId = user?.publicMetadata.userId as string;
     const isAdmin = user?.publicMetadata.isAdmin as boolean || false;
 
     const onEditClick = useCallback(
@@ -70,7 +63,7 @@ export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
         (id: GridRowId) => async () => {
             const questionDeclarations = await getDeclarationsByQuestion(id as string) as IDeclaration[];
 
-            questionDeclarations.forEach((declaration, index) => {
+            questionDeclarations.forEach((declaration) => {
                 deleteDeclaration({declarationId: declaration._id.toString("hex"), path: ""})
             })
 
@@ -117,7 +110,6 @@ export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
             console.log("Setting current question")
             await setCurrentQuestion(params.id.toString())
             try {
-                // channels.question?.channel?.publish({})
                 await currentQuestionChannel.publish({})
             } catch (e) {
                 console.error(e)
@@ -139,11 +131,6 @@ export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
                     },
                 },
                 sorting: { sortModel: [{ field: "name", sort: "asc" }] },
-                // pagination: {
-                //     paginationModel: {
-                //         pageSize: 10,
-                //     },
-                // }
             }} columnVisibilityModel={{
                 actions: isAdmin
             }} onRowClick={onRowClick}/>
