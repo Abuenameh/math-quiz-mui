@@ -23,10 +23,10 @@ const f = createUploadthing({
  */
 export const ourFileRouter = {
     imageUploader: f({image: {maxFileSize: "16MB"}})
-        .middleware(({req}) => {
+        .middleware(({}) => {
             return {};
         })
-        .onUploadComplete(({file, metadata}) => {
+        .onUploadComplete(({file}) => {
             console.log("upload completed", file);
         }),
 } satisfies FileRouter;
