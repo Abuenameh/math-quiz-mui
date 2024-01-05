@@ -13,13 +13,13 @@ export interface IQuestion {
 }
 
 const QuestionSchema = new Schema({
-    name: { type: String, required: true },
-    question: { type: String, required: true },
-    imageUrl: { type: String },
-    imageKey: { type: String },
-    showSolution: { type: Boolean, default: false },
-    current: { type: Boolean, default: false },
-    topic: { type: Schema.Types.ObjectId, ref: "Topic", required: true },
+    name: {type: String, required: true},
+    question: {type: String, required: true},
+    imageUrl: {type: String},
+    imageKey: {type: String},
+    showSolution: {type: Boolean, default: false},
+    current: {type: Boolean, default: false},
+    topic: {type: Schema.Types.ObjectId, ref: "Topic", required: true},
 })
 
 const Question = models.Question || model("Question", QuestionSchema);

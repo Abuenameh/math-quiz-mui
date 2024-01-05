@@ -9,14 +9,16 @@ export const HomePage = async () => {
     return (
         <>
             {isPowerPoint ?
-            <div className={"wrapper align-middle h-screen text-center mt-10 flex flex-row justify-center items-center"}>
-                <Image className={"mr-10"} src={"assets/icons/logo.svg"} width={100} height={100} alt={"logo"}/>
-                <Typography fontSize={"5rem"}>MathQuiz</Typography>
-            </div>
-            :
-            <div className={"wrapper align-middle h-screen text-center mt-10 flex flex-row justify-center items-center"}>
-                <Typography color={"primary"} fontSize={"5rem"}>No active question</Typography>
-            </div>
+                <div
+                    className={"wrapper align-middle h-screen text-center mt-10 flex flex-row justify-center items-center"}>
+                    <Image className={"mr-10"} src={"assets/icons/logo.svg"} width={100} height={100} alt={"logo"}/>
+                    <Typography fontSize={"5rem"}>MathQuiz</Typography>
+                </div>
+                :
+                <div
+                    className={"wrapper align-middle h-screen text-center mt-10 flex flex-row justify-center items-center"}>
+                    <Typography color={"primary"} fontSize={"5rem"}>No active question</Typography>
+                </div>
             }
         </>
     );

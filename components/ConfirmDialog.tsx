@@ -1,17 +1,8 @@
 'use client'
 
-import {
-    Alert,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Button,
-    Box,
-    IconButton,
-} from '@mui/material';
-import { Close } from '@mui/icons-material';
-import { create } from "zustand";
+import {Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton,} from '@mui/material';
+import {Close} from '@mui/icons-material';
+import {create} from "zustand";
 
 type ConfirmDialogStore = {
     title: string;
@@ -24,7 +15,7 @@ const useConfirmDialogStore = create<ConfirmDialogStore>((set) => ({
     title: "Confirm the action",
     message: "",
     onSubmit: undefined,
-    close: () => set({ onSubmit: undefined }),
+    close: () => set({onSubmit: undefined}),
 }));
 
 export const confirmDialog = (title: string, message: string, onSubmit: () => void) => {
@@ -36,13 +27,13 @@ export const confirmDialog = (title: string, message: string, onSubmit: () => vo
 };
 
 export const ConfirmDialog = () => {
-    const { title, message, onSubmit, close } = useConfirmDialogStore();
+    const {title, message, onSubmit, close} = useConfirmDialogStore();
     return (
         <Dialog open={Boolean(onSubmit)} onClose={close} maxWidth="sm" fullWidth>
             <Box display="flex" justifyContent="space-between" alignItems="center">
                 <DialogTitle>{title}</DialogTitle>
                 <IconButton onClick={close}>
-                    <Close />
+                    <Close/>
                 </IconButton>
             </Box>
             <DialogContent>

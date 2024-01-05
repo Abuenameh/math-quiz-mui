@@ -19,7 +19,7 @@ export interface MarkStats {
     topic: ITopic;
 }
 
-export const Statistics = ({ userId }: { userId: string }) => {
+export const Statistics = ({userId}: { userId: string }) => {
     const [noStats, setNoStats] = useState(false);
     const [loaded, setLoaded] = useState(false);
     const courseMarks = useRef(new Map<string, MarkStats>())
@@ -33,8 +33,7 @@ export const Statistics = ({ userId }: { userId: string }) => {
             const answers = await getAnswersByUser(userId) as IAnswer[];
             if (answers.length === 0) {
                 setNoStats(true);
-            }
-            else {
+            } else {
                 mark.current = 0;
                 totalMark.current = 0;
                 courseMarks.current = new Map<string, MarkStats>();
@@ -73,8 +72,10 @@ export const Statistics = ({ userId }: { userId: string }) => {
 
     return (
         <>
-            <CurrentQuestion />
-            <Box bgcolor={"primary.light"} className={"bg-dotted-pattern bg-cover bg-center py-5 md:py-5 text-center sm:text-left"} component={"section"}>
+            <CurrentQuestion/>
+            <Box bgcolor={"primary.light"}
+                 className={"bg-dotted-pattern bg-cover bg-center py-5 md:py-5 text-center sm:text-left"}
+                 component={"section"}>
                 <Box className={"wrapper"}>
                     <Typography variant={"h3"} className={""} fontWeight={"bold"}>My Statistics</Typography>
                 </Box>

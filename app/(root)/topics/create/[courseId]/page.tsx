@@ -4,10 +4,12 @@ import Typography from "@mui/material/Typography";
 import {SearchParamProps} from "@/types";
 // import {Box, Typography} from "@mui/material";
 
-const CreateTopic = ({ params: { courseId } }: SearchParamProps) => {
+const CreateTopic = ({params: {courseId}}: SearchParamProps) => {
     return (
         <>
-            <Box bgcolor={"primary.light"} className={"bg-dotted-pattern bg-cover bg-center py-5 md:py-5 text-center sm:text-left"} component={"section"}>
+            <Box bgcolor={"primary.light"}
+                 className={"bg-dotted-pattern bg-cover bg-center py-5 md:py-5 text-center sm:text-left"}
+                 component={"section"}>
                 <Box className={"wrapper"}>
                     <Typography variant={"h3"} className={""} fontWeight={"bold"}>Create Topic</Typography>
                 </Box>

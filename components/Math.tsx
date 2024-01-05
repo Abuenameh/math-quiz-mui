@@ -1,6 +1,6 @@
 'use client'
 
-import {InlineMath, BlockMath} from "react-katex";
+import {BlockMath, InlineMath} from "react-katex";
 import regexifyString from "regexify-string";
 import "mathlive";
 import {MathfieldElement} from "mathlive";
@@ -27,17 +27,24 @@ type MathProps = {
     updateResponse: (id: string, response: string, correct: boolean, mark: number) => void
 }
 
-function toMath({text, responses, savedResponses, submitted, showSolution, isAdmin, isPowerPoint, updateResponse}: MathProps) {
+function toMath({
+                    text,
+                    responses,
+                    savedResponses,
+                    submitted,
+                    showSolution,
+                    isAdmin,
+                    isPowerPoint,
+                    updateResponse
+                }: MathProps) {
     return regexifyString({
         pattern: /⟬([^⟦][^⟭]*)⟭|⦗([^⟦][^⦘]*)⦘|⟬⟦([^,]+),(\d+)⟧([^⟭]*)⟭|⦗⟦([^,]+),(\d+)⟧([^⦘]*)⦘/gm,
         decorator: (match, index, result) => {
             if (result?.[1] !== undefined) {
                 return <InlineMath key={index}>{result?.[1]}</InlineMath>;
-            }
-            else if (result?.[2] !== undefined) {
+            } else if (result?.[2] !== undefined) {
                 return <BlockMath key={index}>{result?.[2]}</BlockMath>;
-            }
-            else if (result?.[5] !== undefined) {
+            } else if (result?.[5] !== undefined) {
                 const id = result?.[3] || index.toString();
                 const response = savedResponses?.get(id)?.answer;
                 const props: MathAnswerProps = {
@@ -56,8 +63,7 @@ function toMath({text, responses, savedResponses, submitted, showSolution, isAdm
                     updateResponse: updateResponse
                 }
                 return <MathAnswer key={index} {...props} />
-            }
-            else if (result?.[8] !== undefined) {
+            } else if (result?.[8] !== undefined) {
                 const id = result?.[6] || index.toString();
                 const response = savedResponses?.get(id)?.answer;
                 const props: MathAnswerProps = {
@@ -76,8 +82,7 @@ function toMath({text, responses, savedResponses, submitted, showSolution, isAdm
                     updateResponse: updateResponse
                 }
                 return <MathAnswer key={index} {...props} />
-            }
-            else {
+            } else {
                 return <>{match}</>;
             }
         },
@@ -85,12 +90,12 @@ function toMath({text, responses, savedResponses, submitted, showSolution, isAdm
     })
 }
 
-export const Math = ( props: MathProps) => {
+export const Math = (props: MathProps) => {
     return (
         <>
-        <Box>
-            {toMath(props)}
-        </Box>
+            <Box>
+                {toMath(props)}
+            </Box>
         </>
     );
 };

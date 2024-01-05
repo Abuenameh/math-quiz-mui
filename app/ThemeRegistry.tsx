@@ -1,12 +1,11 @@
 'use client';
 
-import { useState } from "react"
-import createCache from '@emotion/cache';
-import { Options } from '@emotion/cache';
-import { useServerInsertedHTML } from 'next/navigation';
-import { ThemeProvider } from '@emotion/react';
+import {useState} from "react"
+import createCache, {Options} from '@emotion/cache';
+import {useServerInsertedHTML} from 'next/navigation';
+import {ThemeProvider} from '@emotion/react';
 import {createTheme} from "@mui/material/styles";
-import type {} from "@mui/x-data-grid/themeAugmentation";
+import type {} from '@mui/x-data-grid/themeAugmentation';
 
 const theme = createTheme({
     components: {
@@ -31,10 +30,10 @@ const theme = createTheme({
     }
 })
 
-export default function ThemeRegistry( { options, children }: { options: Options, children: React.ReactNode } ) {
+export default function ThemeRegistry({options, children}: { options: Options, children: React.ReactNode }) {
     // const { options, children } = props;
 
-    const [{ cache, flush }] = useState(() => {
+    const [{cache, flush}] = useState(() => {
         const cache = createCache(options);
         cache.compat = true;
         const prevInsert = cache.insert;
@@ -51,7 +50,7 @@ export default function ThemeRegistry( { options, children }: { options: Options
             inserted = [];
             return prevInserted;
         };
-        return { cache, flush };
+        return {cache, flush};
     });
 
     useServerInsertedHTML(() => {
@@ -75,6 +74,6 @@ export default function ThemeRegistry( { options, children }: { options: Options
     });
 
     return (
-            <ThemeProvider theme={theme}>{children}</ThemeProvider>
+        <ThemeProvider theme={theme}>{children}</ThemeProvider>
     );
 }

@@ -1,4 +1,4 @@
-import {ChangeEvent, useEffect, useRef} from "react";
+import {useEffect, useRef} from "react";
 import Box from "@mui/material/Box";
 import {MathfieldElement} from "mathlive";
 import {MathAnswerResults} from "@/types";
@@ -19,7 +19,20 @@ export type MathAnswerProps = {
     updateResponse: (id: string, response: string, correct: boolean, mark: number) => void
 }
 
-export const MathAnswer = ( { display, id, answer, mark, response, submitted, showSolution, hasSavedResponse, correct, isAdmin, isPowerPoint, updateResponse }: MathAnswerProps ) => {
+export const MathAnswer = ({
+                               display,
+                               id,
+                               answer,
+                               mark,
+                               response,
+                               submitted,
+                               showSolution,
+                               hasSavedResponse,
+                               correct,
+                               isAdmin,
+                               isPowerPoint,
+                               updateResponse
+                           }: MathAnswerProps) => {
     const responseRef = useRef<MathfieldElement>(null);
     const answerRef = useRef<MathfieldElement>(null);
     const initializedResponse = useRef(false)
@@ -32,9 +45,9 @@ export const MathAnswer = ( { display, id, answer, mark, response, submitted, sh
     }, [correct, id, mark, response, updateResponse])
 
     const editable = !submitted && !hasSavedResponse && !isAdmin && !isPowerPoint;
-    const actuallyShowSolution =  (submitted || hasSavedResponse) && showSolution;
+    const actuallyShowSolution = (submitted || hasSavedResponse) && showSolution;
 
-    const responseStyle ={
+    const responseStyle = {
         display: (submitted && (isAdmin || isPowerPoint)) ? "none" : display,
         width: (display === "inline-block") && (editable || isAdmin || isPowerPoint) ? "5em" : "auto",
         height: (display === "block") && (editable || isAdmin || isPowerPoint) ? "5em" : "auto",
@@ -55,15 +68,16 @@ export const MathAnswer = ( { display, id, answer, mark, response, submitted, sh
 
     return (
         <>
-            <Box className={`${display} ${display === "block" ? "mt-5" : ""} ${!isAdmin && !isPowerPoint ? "border-2 p-2 bg-gray-100" : ""}`}>
-            {editable ?
-                <math-field ref={responseRef} style={responseStyle} onInput={onChange}
-                            >{response}</math-field>
-                :
-                <math-field style={responseStyle} onInput={onChange}
-                            read-only={""}>{response}</math-field>
-            }
-            <math-field ref={answerRef} style={answerStyle} read-only={""}>{answer}</math-field>
+            <Box
+                className={`${display} ${display === "block" ? "mt-5" : ""} ${!isAdmin && !isPowerPoint ? "border-2 p-2 bg-gray-100" : ""}`}>
+                {editable ?
+                    <math-field ref={responseRef} style={responseStyle} onInput={onChange}
+                    >{response}</math-field>
+                    :
+                    <math-field style={responseStyle} onInput={onChange}
+                                read-only={""}>{response}</math-field>
+                }
+                <math-field ref={answerRef} style={answerStyle} read-only={""}>{answer}</math-field>
             </Box>
         </>
     );

@@ -9,9 +9,9 @@ export interface IDeclaration {
 }
 
 const DeclarationSchema = new Schema({
-    symbol: { type: String, required: true },
-    domain: { type: String, required: true },
-    question: { type: Schema.Types.ObjectId, ref: "Question", required: true },
+    symbol: {type: String, required: true},
+    domain: {type: String, required: true},
+    question: {type: Schema.Types.ObjectId, ref: "Question", required: true},
 })
 
 const Declaration = models.Declaration || model("Declaration", DeclarationSchema);

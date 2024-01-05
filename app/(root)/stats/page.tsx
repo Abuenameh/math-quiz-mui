@@ -15,9 +15,9 @@ const ProfilePage = async () => {
                     <Typography color={"primary"} fontSize={"2rem"}>Admin has no statistics</Typography>
                 </div>
                 :
-                <Statistics userId={userId} />
+                <Statistics userId={userId}/>
             }
-            </>
+        </>
     );
 }
 

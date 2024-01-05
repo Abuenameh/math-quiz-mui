@@ -1,16 +1,12 @@
 'use server'
 
-import {
-    CreateCourseParams,
-    EditCourseParams,
-    DeleteCourseParams
-} from "@/types";
+import {CreateCourseParams, DeleteCourseParams, EditCourseParams} from "@/types";
 import {handleError} from "@/lib/utils";
 import {connectToDatabase} from "@/lib/database";
 import Course from "@/lib/database/models/course.model";
 import {revalidatePath} from "next/cache";
 
-export const createCourse = async ({ course, path }: CreateCourseParams) => {
+export const createCourse = async ({course, path}: CreateCourseParams) => {
     try {
         await connectToDatabase();
 
@@ -39,7 +35,7 @@ export async function getCourseById(courseId: string) {
     }
 }
 
-export async function editCourse({ course, path }: EditCourseParams) {
+export async function editCourse({course, path}: EditCourseParams) {
     try {
         await connectToDatabase()
 
@@ -50,8 +46,8 @@ export async function editCourse({ course, path }: EditCourseParams) {
 
         const editedCourse = await Course.findByIdAndUpdate(
             course._id,
-            { ...course },
-            { new: true }
+            {...course},
+            {new: true}
         )
         revalidatePath(path)
 
@@ -61,7 +57,7 @@ export async function editCourse({ course, path }: EditCourseParams) {
     }
 }
 
-export async function deleteCourse({ courseId, path }: DeleteCourseParams) {
+export async function deleteCourse({courseId, path}: DeleteCourseParams) {
     try {
         await connectToDatabase()
 
@@ -79,7 +75,7 @@ export async function getAllCourses() {
         const conditions = {};
 
         const coursesQuery = Course.find(conditions)
-            .sort({ code: 'asc' })
+            .sort({code: 'asc'})
 
         const courses = await coursesQuery
 

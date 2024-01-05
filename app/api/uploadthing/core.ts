@@ -1,6 +1,6 @@
-import { createUploadthing } from "uploadthing/next";
-import type { FileRouter } from "uploadthing/next";
-import { UTApi } from "uploadthing/server";
+import type {FileRouter} from "uploadthing/next";
+import {createUploadthing} from "uploadthing/next";
+import {UTApi} from "uploadthing/server";
 
 export const utapi = new UTApi();
 
@@ -13,7 +13,7 @@ const f = createUploadthing({
         console.log("Error uploading file", err.message);
         console.log("  - Above error caused by:", err.cause);
 
-        return { message: err.message };
+        return {message: err.message};
     },
 });
 
@@ -22,11 +22,11 @@ const f = createUploadthing({
  * @see https://docs.uploadthing.com/api-reference/server#file-routes
  */
 export const ourFileRouter = {
-    imageUploader: f({ image: { maxFileSize: "16MB" } })
-        .middleware(({ req }) => {
+    imageUploader: f({image: {maxFileSize: "16MB"}})
+        .middleware(({req}) => {
             return {};
         })
-        .onUploadComplete(({ file, metadata }) => {
+        .onUploadComplete(({file, metadata}) => {
             console.log("upload completed", file);
         }),
 } satisfies FileRouter;

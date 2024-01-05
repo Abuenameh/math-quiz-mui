@@ -8,7 +8,8 @@ import {
     GridColDef,
     GridRowId,
     GridRowParams,
-    GridToolbarContainer, GridToolbarQuickFilter
+    GridToolbarContainer,
+    GridToolbarQuickFilter
 } from "@mui/x-data-grid";
 import {confirmDialog} from "@/components/ConfirmDialog";
 import EditIcon from "@mui/icons-material/Edit";
@@ -27,15 +28,17 @@ import {deleteAnswersByQuestion} from "@/lib/actions/answer.actions";
 function QuestionToolbar() {
     const router = useRouter();
     const params = useParams()
-    const { user } = useUser();
+    const {user} = useUser();
 
     const isAdmin = user?.publicMetadata.isAdmin as boolean || false;
 
     return (
         <GridToolbarContainer className={"m-2"}>
-            {isAdmin && <Button variant={"contained"} startIcon={<Add />} onClick={() => router.push(`/questions/create/${params.topicId}`)}>Add Question</Button>}
-            <div className={"flex-1"} />
-            <GridToolbarQuickFilter />
+            {isAdmin && <Button variant={"contained"} startIcon={<Add/>}
+                                onClick={() => router.push(`/questions/create/${params.topicId}`)}>Add
+                Question</Button>}
+            <div className={"flex-1"}/>
+            <GridToolbarQuickFilter/>
         </GridToolbarContainer>
     );
 }
@@ -47,8 +50,8 @@ interface QuestionTableProps {
 
 export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
     const router = useRouter();
-    const { user } = useUser();
-    const { channel: currentQuestionChannel } = useChannel("current-question");
+    const {user} = useUser();
+    const {channel: currentQuestionChannel} = useChannel("current-question");
 
     const isAdmin = user?.publicMetadata.isAdmin as boolean || false;
 
@@ -69,7 +72,7 @@ export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
 
             const question = await getQuestionById(id as string);
             confirmDialog("Confirm deletion", `Do you really want to delete the question ${question.name}?`, async () => {
-                await deleteQuestion({ questionId: id as string, path: `/topics/${topicId}` })
+                await deleteQuestion({questionId: id as string, path: `/topics/${topicId}`})
             });
         },
         [topicId],
@@ -77,22 +80,27 @@ export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
 
     const onDeleteAnswersClick = useCallback(
         (id: GridRowId) => async () => {
-        const question = await getQuestionById(id as string);
-        confirmDialog("Confirm deletion", `Do you really want to delete all answers to the question ${question.name}?`, async () => {
-            await deleteAnswersByQuestion(id as string)
-        });
+            const question = await getQuestionById(id as string);
+            confirmDialog("Confirm deletion", `Do you really want to delete all answers to the question ${question.name}?`, async () => {
+                await deleteAnswersByQuestion(id as string)
+            });
         },
         [],
     );
 
     const columns: GridColDef[] = [
-        { field: "name", headerName: "Name", width: 200 },
-        { field: "question", headerName: "Question", flex: 1 },
-        { field: "actions", type: "actions", getActions: (params) => [
-                <GridActionsCellItem key={params.id} label={"Edit"} icon={<EditIcon/>} onClick={onEditClick(params.id)}/>,
-                <GridActionsCellItem key={params.id} label={"Delete"} icon={<DeleteIcon/>} color={"error"} onClick={onDeleteClick(params.id)}/>,
-                <GridActionsCellItem key={params.id} label={"Delete all answers"} icon={<DeleteIcon/>} color={"error"} onClick={onDeleteAnswersClick(params.id)} showInMenu={true}/>,
-            ]}
+        {field: "name", headerName: "Name", width: 200},
+        {field: "question", headerName: "Question", flex: 1},
+        {
+            field: "actions", type: "actions", getActions: (params) => [
+                <GridActionsCellItem key={params.id} label={"Edit"} icon={<EditIcon/>}
+                                     onClick={onEditClick(params.id)}/>,
+                <GridActionsCellItem key={params.id} label={"Delete"} icon={<DeleteIcon/>} color={"error"}
+                                     onClick={onDeleteClick(params.id)}/>,
+                <GridActionsCellItem key={params.id} label={"Delete all answers"} icon={<DeleteIcon/>} color={"error"}
+                                     onClick={onDeleteAnswersClick(params.id)} showInMenu={true}/>,
+            ]
+        }
     ];
 
     const removeAnswers = (question: string): string => {
@@ -121,20 +129,22 @@ export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
 
     return (
         <>
-            <CurrentQuestion />
-        <Box className={"h-[30rem]"}>
-            <DataGrid columns={columns} rows={rows} disableRowSelectionOnClick disableColumnFilter disableColumnSelector disableDensitySelector slots={{ toolbar: QuestionToolbar }} initialState={{
-                filter: {
-                    filterModel: {
-                        items: [],
-                        quickFilterExcludeHiddenColumns: true,
-                    },
-                },
-                sorting: { sortModel: [{ field: "name", sort: "asc" }] },
-            }} columnVisibilityModel={{
-                actions: isAdmin
-            }} onRowClick={onRowClick}/>
-        </Box>
+            <CurrentQuestion/>
+            <Box className={"h-[30rem]"}>
+                <DataGrid columns={columns} rows={rows} disableRowSelectionOnClick disableColumnFilter
+                          disableColumnSelector disableDensitySelector slots={{toolbar: QuestionToolbar}}
+                          initialState={{
+                              filter: {
+                                  filterModel: {
+                                      items: [],
+                                      quickFilterExcludeHiddenColumns: true,
+                                  },
+                              },
+                              sorting: {sortModel: [{field: "name", sort: "asc"}]},
+                          }} columnVisibilityModel={{
+                    actions: isAdmin
+                }} onRowClick={onRowClick}/>
+            </Box>
         </>
     );
 };

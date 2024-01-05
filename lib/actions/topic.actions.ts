@@ -1,17 +1,13 @@
 'use server'
 
-import {
-    CreateTopicParams,
-    DeleteTopicParams,
-    EditTopicParams
-} from "@/types";
+import {CreateTopicParams, DeleteTopicParams, EditTopicParams} from "@/types";
 import {connectToDatabase} from "@/lib/database";
 import Course, {ICourse} from "@/lib/database/models/course.model";
 import {revalidatePath} from "next/cache";
 import {handleError} from "@/lib/utils";
 import Topic from "@/lib/database/models/topic.model";
 
-export const createTopic = async ({ topic, path }: CreateTopicParams) => {
+export const createTopic = async ({topic, path}: CreateTopicParams) => {
     try {
         await connectToDatabase();
 
@@ -29,7 +25,7 @@ export async function getTopicById(topicId: string) {
         await connectToDatabase();
 
         const topic = await Topic.findById(topicId)
-            .populate<{course: ICourse}>({path: "course", model: Course})
+            .populate<{ course: ICourse }>({path: "course", model: Course})
 
         if (!topic) {
             throw new Error('Topic not found');
@@ -41,7 +37,7 @@ export async function getTopicById(topicId: string) {
     }
 }
 
-export async function editTopic({ topic, path }: EditTopicParams) {
+export async function editTopic({topic, path}: EditTopicParams) {
     try {
         await connectToDatabase()
 
@@ -53,8 +49,8 @@ export async function editTopic({ topic, path }: EditTopicParams) {
 
         const editedTopic = await Topic.findByIdAndUpdate(
             topic._id,
-            { ...topic },
-            { new: true }
+            {...topic},
+            {new: true}
         )
         revalidatePath(path)
 
@@ -68,11 +64,11 @@ export async function getTopicsByCourse(courseId: string) {
     try {
         await connectToDatabase()
 
-        const conditions = { course: courseId }
+        const conditions = {course: courseId}
 
         const topicsQuery = Topic.find(conditions)
-            .sort({ num: 'asc' })
-            .populate<{course: ICourse}>({path: "course", model: Course})
+            .sort({num: 'asc'})
+            .populate<{ course: ICourse }>({path: "course", model: Course})
 
         const topics = await topicsQuery;
 
@@ -82,7 +78,7 @@ export async function getTopicsByCourse(courseId: string) {
     }
 }
 
-export async function deleteTopic({ topicId, path }: DeleteTopicParams) {
+export async function deleteTopic({topicId, path}: DeleteTopicParams) {
     try {
         await connectToDatabase()
 

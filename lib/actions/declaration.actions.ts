@@ -1,15 +1,12 @@
 'use server'
 
-import {
-    CreateDeclarationParams,
-    DeleteDeclarationParams,
-} from "@/types";
+import {CreateDeclarationParams, DeleteDeclarationParams,} from "@/types";
 import {connectToDatabase} from "@/lib/database";
 import {handleError} from "@/lib/utils";
 import Question, {IQuestion} from "@/lib/database/models/question.model";
 import Declaration from "@/lib/database/models/declaration.model";
 
-export const createDeclaration = async ({ declaration }: CreateDeclarationParams) => {
+export const createDeclaration = async ({declaration}: CreateDeclarationParams) => {
     try {
         await connectToDatabase();
 
@@ -25,11 +22,11 @@ export async function getDeclarationsByQuestion(questionId: string) {
     try {
         await connectToDatabase()
 
-        const conditions = { question: questionId }
+        const conditions = {question: questionId}
 
         const declarationsQuery = Declaration.find(conditions)
-            .sort({ symbol: 'asc' })
-            .populate<{question: IQuestion}>({path: "question", model: Question})
+            .sort({symbol: 'asc'})
+            .populate<{ question: IQuestion }>({path: "question", model: Question})
 
         const declarations = await declarationsQuery;
 
@@ -39,7 +36,7 @@ export async function getDeclarationsByQuestion(questionId: string) {
     }
 }
 
-export async function deleteDeclaration({ declarationId }: DeleteDeclarationParams) {
+export async function deleteDeclaration({declarationId}: DeleteDeclarationParams) {
     try {
         await connectToDatabase()
 
@@ -54,7 +51,7 @@ export async function deleteDeclarationsByQuestion(questionId: string) {
     try {
         await connectToDatabase()
 
-        const conditions = { question: questionId }
+        const conditions = {question: questionId}
 
         await Declaration.deleteMany(conditions);
     } catch (error) {

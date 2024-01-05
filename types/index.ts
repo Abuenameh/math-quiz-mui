@@ -17,8 +17,8 @@ export type UpdateUserParams = {
 
 export type CreateCourseParams = {
     course: {
-    code: string
-    title: string
+        code: string
+        title: string
     }
     path: string
 }
@@ -26,7 +26,7 @@ export type CreateCourseParams = {
 export type EditCourseParams = {
     course: {
         _id: string
-    code: string
+        code: string
         title: string
     }
     path: string
@@ -115,7 +115,7 @@ export type DeleteDeclarationParams = {
 export type CreateAnswerParams = {
     // courseId: string
     answer: {
-        answers: Map<string, {answer: string, correct: boolean, mark: number}>
+        answers: Map<string, { answer: string, correct: boolean, mark: number }>
         question: string
         user: string
     }
@@ -139,4 +139,4 @@ export type SearchParamProps = {
     searchParams: { [key: string]: string | string[] | undefined }
 }
 
-export type MathAnswerResults = Map<string, {answer: string, correct: boolean, mark: number}>
+export type MathAnswerResults = Map<string, { answer: string, correct: boolean, mark: number }>

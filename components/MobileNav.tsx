@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import {useState} from "react";
 import Image from "next/image";
 import Drawer from "@mui/material/Drawer";
 import {NavItems} from "@/components/NavItems";
@@ -12,7 +12,7 @@ export const MobileNav = () => {
 
     return (
         <nav className={"md:hidden"}>
-            <MenuIcon onClick={() => setOpen(true)} className={"cursor-pointer"} fontSize={"large"} />
+            <MenuIcon onClick={() => setOpen(true)} className={"cursor-pointer"} fontSize={"large"}/>
             <Drawer anchor={"right"} onClose={() => setOpen(false)} open={open}>
                 <div className={"flex flex-col gap-3 bg-white p-4 md:hidden"}>
                     <Image src={"assets/icons/logo.svg"}

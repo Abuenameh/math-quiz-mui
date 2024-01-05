@@ -8,9 +8,9 @@ import {handleError} from "@/lib/utils";
 import Question, {IQuestion} from "@/lib/database/models/question.model";
 import Topic, {ITopic} from "@/lib/database/models/topic.model";
 import Answer from "@/lib/database/models/answer.model";
-import { utapi } from "@/app/api/uploadthing/core"
+import {utapi} from "@/app/api/uploadthing/core"
 
-export const createQuestion = async ({ question, path }: CreateQuestionParams) => {
+export const createQuestion = async ({question, path}: CreateQuestionParams) => {
     try {
         await connectToDatabase();
 
@@ -28,7 +28,7 @@ export async function getQuestionById(questionId: string) {
         await connectToDatabase();
 
         const question = await Question.findById(questionId)
-            .populate<{topic: ITopic}>({path: "topic", model: Topic, populate: {path: "course", model: Course}})
+            .populate<{ topic: ITopic }>({path: "topic", model: Topic, populate: {path: "course", model: Course}})
 
         if (!question) {
             throw new Error('Question not found');
@@ -40,7 +40,7 @@ export async function getQuestionById(questionId: string) {
     }
 }
 
-export async function editQuestion({ question, path }: EditQuestionParams) {
+export async function editQuestion({question, path}: EditQuestionParams) {
     try {
         await connectToDatabase()
 
@@ -50,13 +50,13 @@ export async function editQuestion({ question, path }: EditQuestionParams) {
         }
 
         if (question.imageKey !== questionToEdit.imageKey) {
-                await utapi.deleteFiles(questionToEdit.imageKey)
+            await utapi.deleteFiles(questionToEdit.imageKey)
         }
 
         const editedQuestion = await Question.findByIdAndUpdate(
             question._id,
-            { ...question },
-            { new: true }
+            {...question},
+            {new: true}
         )
         revalidatePath(path)
 
@@ -70,11 +70,11 @@ export async function getQuestionsByTopic(topicId: string) {
     try {
         await connectToDatabase()
 
-        const conditions = { topic: topicId }
+        const conditions = {topic: topicId}
 
         const questionsQuery = Question.find(conditions)
-            .sort({ name: 'asc' })
-            .populate<{topic: ITopic}>({path: "topic", model: Topic, populate: {path: "course", model: Course}})
+            .sort({name: 'asc'})
+            .populate<{ topic: ITopic }>({path: "topic", model: Topic, populate: {path: "course", model: Course}})
 
         const questions = await questionsQuery;
 
@@ -88,10 +88,14 @@ export async function getAnsweredQuestionsByTopic(topicId: string, userId: strin
     try {
         await connectToDatabase()
 
-        const conditions = { user: userId }
+        const conditions = {user: userId}
 
         const answersQuery = Answer.find(conditions)
-            .populate<{question: IQuestion}>({path: "question", model: Question, populate: {path: "topic", model: Topic, populate: {path: "course", model: Course}}})
+            .populate<{ question: IQuestion }>({
+                path: "question",
+                model: Question,
+                populate: {path: "topic", model: Topic, populate: {path: "course", model: Course}}
+            })
 
         const answers = await answersQuery;
         const questions = answers.map(answer => answer.question).filter(question => question.topic._id.toString("hex") === topicId)
@@ -113,8 +117,8 @@ export async function setCurrentQuestion(questionId: string) {
 
         await Question.findByIdAndUpdate(
             questionId,
-            { current: true },
-            { new: true }
+            {current: true},
+            {new: true}
         )
     } catch (error) {
         handleError(error)
@@ -125,7 +129,7 @@ export async function getCurrentQuestion() {
     try {
         await connectToDatabase()
 
-        const conditions = { current: true }
+        const conditions = {current: true}
         const question = await Question.findOne(conditions)
         if (!question) {
             return ""
@@ -141,13 +145,13 @@ export async function clearCurrentQuestion() {
     try {
         await connectToDatabase()
 
-        await Question.updateMany({ current: true }, { current: false })
+        await Question.updateMany({current: true}, {current: false})
     } catch (error) {
         handleError(error)
     }
 }
 
-export async function deleteQuestion({ questionId, path }: DeleteQuestionParams) {
+export async function deleteQuestion({questionId, path}: DeleteQuestionParams) {
     try {
         await connectToDatabase()
 

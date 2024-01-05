@@ -15,28 +15,28 @@ export const Header = async () => {
             <div className={"wrapper flex items-center justify-between"}>
                 <Link href={"/"} className={"flex-1"}>
                     <div className={"flex flex-row items-center"}>
-                    <Image src={"/assets/icons/logo.svg"} width={38} height={38} alt={"logo"}/>
-                    <Typography ml={2} fontSize={20} fontWeight={"bold"}>MathQuiz</Typography>
+                        <Image src={"/assets/icons/logo.svg"} width={38} height={38} alt={"logo"}/>
+                        <Typography ml={2} fontSize={20} fontWeight={"bold"}>MathQuiz</Typography>
                     </div>
                 </Link>
 
-            <SignedIn>
-                <nav className={"md:flex-between hidden w-full max-w-xs"}>
-                    <NavItems />
-                </nav>
-            </SignedIn>
-
-            <div className={"flex flex-1 w-32 justify-end gap-3"}>
                 <SignedIn>
-                    <UserButton afterSignOutUrl={"/"} />
-                    <MobileNav />
+                    <nav className={"md:flex-between hidden w-full max-w-xs"}>
+                        <NavItems/>
+                    </nav>
                 </SignedIn>
-                <SignedOut>
-                    <Button variant={"contained"}>
-                        <Link href={"/sign-in"}>Login</Link>
-                    </Button>
-                </SignedOut>
-            </div>
+
+                <div className={"flex flex-1 w-32 justify-end gap-3"}>
+                    <SignedIn>
+                        <UserButton afterSignOutUrl={"/"}/>
+                        <MobileNav/>
+                    </SignedIn>
+                    <SignedOut>
+                        <Button variant={"contained"}>
+                            <Link href={"/sign-in"}>Login</Link>
+                        </Button>
+                    </SignedOut>
+                </div>
             </div>
         </header>
     );
