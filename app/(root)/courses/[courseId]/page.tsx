@@ -11,9 +11,6 @@ import {getTopicsByCourse} from "@/lib/actions/topic.actions";
 import {ITopic} from "@/lib/database/models/topic.model";
 
 const CourseDetails = async ({ params: { courseId } }: SearchParamProps) => {
-    // const RealtimeComponent = dynamic(() => import("@/components/RealtimeComponent"), {
-    //     ssr: false
-    // })
     const course = await getCourseById(courseId);
     const topics: ITopic[] = await getTopicsByCourse(courseId);
 
@@ -26,9 +23,7 @@ const CourseDetails = async ({ params: { courseId } }: SearchParamProps) => {
     </Box>
 
     <Box id="events" className="wrapper my-8 flex flex-col gap-8 md:gap-12">
-        {/*<RealtimeComponent>*/}
-        <TopicTable courseId={courseId} topics={topics}/>
-        {/*</RealtimeComponent>*/}
+        <TopicTable topics={topics}/>
     </Box>
 </>
     )
