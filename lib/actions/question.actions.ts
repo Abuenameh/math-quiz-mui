@@ -7,14 +7,10 @@ import {revalidatePath} from "next/cache";
 import {handleError} from "@/lib/utils";
 import Question, {IQuestion} from "@/lib/database/models/question.model";
 import Topic, {ITopic} from "@/lib/database/models/topic.model";
-// import Answer from "@/lib/database/models/answer.model";
 import {utapi} from "@/app/api/uploadthing/core"
 import {
-    deleteDeclaration,
     deleteDeclarationsByQuestion,
-    getDeclarationsByQuestion
 } from "@/lib/actions/declaration.actions";
-import {IDeclaration} from "@/lib/database/models/declaration.model";
 import {deleteResponsesByQuestion} from "@/lib/actions/response.actions";
 import Response from "@/lib/database/models/response.model";
 
@@ -174,6 +170,30 @@ export async function deleteQuestion({questionId, path}: DeleteQuestionParams) {
 
         const deletedQuestion = await Question.findByIdAndDelete(questionId)
         if (deletedQuestion) revalidatePath(path)
+    } catch (error) {
+        handleError(error)
+    }
+}
+
+export async function getNextQuestionNumber(topicId: string) {
+    try {
+        await connectToDatabase()
+
+        const conditions = {topic: topicId}
+
+        const questionNumberQuery = Question.find(conditions)
+            .sort({num: 'desc'})
+            .limit(1)
+
+        const questionNumber = await questionNumberQuery;
+
+        if (questionNumber.length > 0) {
+            return questionNumber[0].num + 1
+        }
+        else {
+            return 1
+        }
+
     } catch (error) {
         handleError(error)
     }

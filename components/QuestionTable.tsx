@@ -19,11 +19,8 @@ import {IQuestion} from "@/lib/database/models/question.model";
 import {Add} from "@mui/icons-material";
 import {deleteQuestion, getQuestionById, setCurrentQuestion} from "@/lib/actions/question.actions";
 import {useChannel} from "ably/react";
-import {deleteDeclaration, getDeclarationsByQuestion} from "@/lib/actions/declaration.actions";
-import {IDeclaration} from "@/lib/database/models/declaration.model";
 import {useUser} from "@clerk/nextjs";
 import {CurrentQuestion} from "@/components/CurrentQuestion";
-// import {deleteAnswersByQuestion} from "@/lib/actions/answer.actions";
 import {deleteResponsesByQuestion} from "@/lib/actions/response.actions";
 
 function QuestionToolbar() {
@@ -84,6 +81,7 @@ export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
     );
 
     const columns: GridColDef[] = [
+        {field: "num", headerName: "#", width: 80},
         {field: "name", headerName: "Name", width: 200},
         {field: "question", headerName: "Question", flex: 1},
         {
@@ -104,6 +102,7 @@ export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
 
     const rows = questions.map((question) => ({
         id: question._id,
+        num: question.num,
         name: question.name,
         question: removeAnswers(question.question)
     }));
@@ -135,7 +134,7 @@ export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
                                       quickFilterExcludeHiddenColumns: true,
                                   },
                               },
-                              sorting: {sortModel: [{field: "name", sort: "asc"}]},
+                              sorting: {sortModel: [{field: "num", sort: "asc"}]},
                           }} columnVisibilityModel={{
                     actions: isAdmin
                 }} onRowClick={onRowClick}/>

@@ -2,9 +2,12 @@ import {QuestionForm} from "@/components/QuestionForm";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import {SearchParamProps} from "@/types";
+import {getNextQuestionNumber} from "@/lib/actions/question.actions";
 // import {Box, Typography} from "@mui/material";
 
 const CreateQuestion = async ({params: {topicId}}: SearchParamProps) => {
+    const num = await getNextQuestionNumber(topicId);
+
     return (
         <>
             <Box bgcolor={"primary.light"}
@@ -16,7 +19,7 @@ const CreateQuestion = async ({params: {topicId}}: SearchParamProps) => {
             </Box>
 
             <Box className={"wrapper my-8"}>
-                <QuestionForm type={"Create"} topicId={topicId}/>
+                <QuestionForm type={"Create"} topicId={topicId} num={num}/>
             </Box>
         </>
     );

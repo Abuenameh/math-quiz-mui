@@ -3,6 +3,7 @@ import {ITopic} from "@/lib/database/models/topic.model";
 
 export interface IQuestion {
     _id: Types.ObjectId;
+    num: number;
     name: string;
     question: string;
     layouts?: string;
@@ -14,6 +15,7 @@ export interface IQuestion {
 }
 
 const QuestionSchema = new Schema({
+    num: {type: Number, required: true},
     name: {type: String, required: true},
     question: {type: String, required: true},
     layouts: {type: String},

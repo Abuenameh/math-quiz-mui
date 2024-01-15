@@ -22,11 +22,13 @@ import insertTextAtCursor from "insert-text-at-cursor";
 type QuestionFormProps = {
     type: "Create" | "Edit"
     topicId: string
+    num?: number
     question?: IQuestion
     questionId?: string
 }
 
 type QuestionProps = {
+    num: number,
     name: string,
     question: string,
     layouts?: string,
@@ -35,12 +37,13 @@ type QuestionProps = {
     showSolution: boolean,
 }
 
-export const QuestionForm = ({type, topicId, question, questionId}: QuestionFormProps) => {
+export const QuestionForm = ({type, topicId, num, question, questionId}: QuestionFormProps) => {
     const router = useRouter();
     const {user} = useUser();
     const questionRef = useRef<HTMLInputElement>(null);
     const formContext = useForm<QuestionProps>({
         defaultValues: {
+            num: question?.num || num || undefined,
             name: question?.name || "",
             question: question?.question || "",
             layouts: question?.layouts || "",
@@ -190,9 +193,12 @@ export const QuestionForm = ({type, topicId, question, questionId}: QuestionForm
             <FormContainer formContext={formContext} onSuccess={onSubmit}>
                 <Stack spacing={3}>
                     <Box className={"flex flex-col gap-5 md:flex-row"}>
+                    <Box className={"w-50"}>
+                        <TextFieldElement name={"num"} label={"Question number"} required/>
                     </Box>
                     <Box className={"w-full"}>
                         <TextFieldElement fullWidth name={"name"} label={"Question name"} required/>
+                    </Box>
                     </Box>
                     <Box className={"w-full"}>
                         <TextFieldElement inputRef={questionRef} multiline fullWidth name={"question"}
