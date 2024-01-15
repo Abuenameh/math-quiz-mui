@@ -2,14 +2,11 @@
 
 import {Math} from "@/components/Math";
 import {IQuestion} from "@/lib/database/models/question.model";
-import {useRef, useState} from "react";
+import {useState} from "react";
 import {useChannel} from "ably/react";
 import Button from "@mui/material/Button";
 import {MathfieldElement} from "mathlive";
-import {CreateResponseParams, MathAnswerResults} from "@/types";
-// import {createAnswer} from "@/lib/actions/answer.actions";
-// import {IAnswer} from "@/lib/database/models/answer.model";
-import {editQuestion, getQuestionById} from "@/lib/actions/question.actions";
+import {editQuestion} from "@/lib/actions/question.actions";
 import {Box, CircularProgress} from "@mui/material";
 import {CurrentQuestion} from "@/components/CurrentQuestion";
 import Image from "next/image";
@@ -18,7 +15,6 @@ import "compute-engine";
 import {createResponse, getResponsesByQuestionAndUser} from "@/lib/actions/response.actions";
 import {useEffectOnce, useMap} from "usehooks-ts";
 import {IResponse} from "@/lib/database/models/response.model";
-import {useRouter} from "next/navigation";
 
 export type ResponseProps = {
     id: string
@@ -44,7 +40,7 @@ export const Question = ({question, declarations, userId, isAdmin, isPowerPoint}
     // const responses = useRef<MathAnswerResults>(new Map());
     // const [savedResponses, setSavedResponses] = useState<MathAnswerResults>(new Map());
     // const [submitted, setSubmitted] = useState(false)
-    const [showSolution, setShowSolution] = useState(question.showSolution)
+    const [showSolution, setShowSolution] = useState(userId !== "" ? question.showSolution : false)
 
     const [responses, responsesActions] = useMap<string, ResponseProps>()
     const [savedResponses, savedResponsesActions] = useMap<string, ResponseProps>()
@@ -53,8 +49,10 @@ export const Question = ({question, declarations, userId, isAdmin, isPowerPoint}
     const [hadFocus, setHadFocus] = useState(true);
 
     const {channel: showSolutionChannel} = useChannel("show-solution", () => {
-                    submit();
-                setShowSolution(true);
+        if (userId !== "") {
+            submit();
+            setShowSolution(true);
+        }
     })
 
     // const {channel: showSolutionChannel} = useChannel("show-solution", () => {
@@ -166,7 +164,7 @@ export const Question = ({question, declarations, userId, isAdmin, isPowerPoint}
         const hasFocus = document.hasFocus()
         setHadFocus(hasFocus)
         if (!isAdmin && !isPowerPoint && hasFocus) {
-            responses.forEach((response, id) => {
+            responses.forEach((response) => {
                 createResponse({response: {...response, question: question._id.toString("hex"), user: userId}}).catch(console.error)
                 correctActions.set(response.id, isCorrect(response.jsonResponse, response.jsonAnswer))
             })
@@ -219,7 +217,7 @@ export const Question = ({question, declarations, userId, isAdmin, isPowerPoint}
 
     return (
         <>
-            <CurrentQuestion/>
+            {userId !== "" && <CurrentQuestion/>}
             {loaded ?
                 <>
                     {question.imageUrl &&

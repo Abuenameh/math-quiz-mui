@@ -1,11 +1,9 @@
 'use server'
 
-import {CreateAnswerParams, CreateResponseParams} from "@/types";
+import {CreateResponseParams} from "@/types";
 import {connectToDatabase} from "@/lib/database";
-import {Types} from "mongoose";
 import Response from "@/lib/database/models/response.model";
 import {handleError} from "@/lib/utils";
-// import Answer from "@/lib/database/models/answer.model";
 import Question, {IQuestion} from "@/lib/database/models/question.model";
 import {ITopic} from "@/lib/database/models/topic.model";
 import {ICourse} from "@/lib/database/models/course.model";
@@ -29,7 +27,7 @@ export async function getResponsesByQuestionAndUser(questionId: string, userId: 
     try {
         await connectToDatabase();
 
-        const conditions = {question: questionId, user: userId}
+        const conditions = userId ? {question: questionId, user: userId} : {question: questionId}
 
         const responses = await Response.find(conditions);
 
