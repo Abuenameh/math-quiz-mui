@@ -23,7 +23,8 @@ import {deleteDeclaration, getDeclarationsByQuestion} from "@/lib/actions/declar
 import {IDeclaration} from "@/lib/database/models/declaration.model";
 import {useUser} from "@clerk/nextjs";
 import {CurrentQuestion} from "@/components/CurrentQuestion";
-import {deleteAnswersByQuestion} from "@/lib/actions/answer.actions";
+// import {deleteAnswersByQuestion} from "@/lib/actions/answer.actions";
+import {deleteResponsesByQuestion} from "@/lib/actions/response.actions";
 
 function QuestionToolbar() {
     const router = useRouter();
@@ -64,12 +65,6 @@ export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
 
     const onDeleteClick = useCallback(
         (id: GridRowId) => async () => {
-            const questionDeclarations = await getDeclarationsByQuestion(id as string) as IDeclaration[];
-
-            questionDeclarations.forEach((declaration) => {
-                deleteDeclaration({declarationId: declaration._id.toString("hex"), path: ""})
-            })
-
             const question = await getQuestionById(id as string);
             confirmDialog("Confirm deletion", `Do you really want to delete the question ${question.name}?`, async () => {
                 await deleteQuestion({questionId: id as string, path: `/topics/${topicId}`})
@@ -78,11 +73,11 @@ export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
         [topicId],
     );
 
-    const onDeleteAnswersClick = useCallback(
+    const onDeleteResponsesClick = useCallback(
         (id: GridRowId) => async () => {
             const question = await getQuestionById(id as string);
-            confirmDialog("Confirm deletion", `Do you really want to delete all answers to the question ${question.name}?`, async () => {
-                await deleteAnswersByQuestion(id as string)
+            confirmDialog("Confirm deletion", `Do you really want to delete all responses to the question ${question.name}?`, async () => {
+                await deleteResponsesByQuestion(id as string)
             });
         },
         [],
@@ -97,8 +92,8 @@ export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
                                      onClick={onEditClick(params.id)}/>,
                 <GridActionsCellItem key={params.id} label={"Delete"} icon={<DeleteIcon/>} color={"error"}
                                      onClick={onDeleteClick(params.id)}/>,
-                <GridActionsCellItem key={params.id} label={"Delete all answers"} icon={<DeleteIcon/>} color={"error"}
-                                     onClick={onDeleteAnswersClick(params.id)} showInMenu={true}/>,
+                <GridActionsCellItem key={params.id} label={"Delete all responses"} icon={<DeleteIcon/>} color={"error"}
+                                     onClick={onDeleteResponsesClick(params.id)} showInMenu={true}/>,
             ]
         }
     ];
@@ -115,7 +110,7 @@ export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
 
     const onRowClick = async (params: GridRowParams) => {
         if (isAdmin) {
-            console.log("Setting current question")
+            // console.log("Setting current question")
             await setCurrentQuestion(params.id.toString())
             try {
                 await currentQuestionChannel.publish({})

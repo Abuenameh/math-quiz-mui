@@ -112,6 +112,20 @@ export type DeleteDeclarationParams = {
     path: string
 }
 
+export type CreateResponseParams = {
+    response: {
+        id: string
+        response: string
+        answer: string
+        jsonResponse: string
+        jsonAnswer: string
+        // correct: boolean
+        mark: number
+        question: string
+        user: string
+    }
+}
+
 export type CreateAnswerParams = {
     // courseId: string
     answer: {

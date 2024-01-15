@@ -1,5 +1,5 @@
 import {model, models, Schema, Types} from "mongoose";
-import {IAnswer} from "@/lib/database/models/answer.model";
+// import {IAnswer} from "@/lib/database/models/answer.model";
 
 export interface IUser {
     _id: Types.ObjectId;
@@ -8,7 +8,7 @@ export interface IUser {
     firstName: string;
     lastName: string;
     photo: string;
-    answers: Types.Array<Types.ObjectId | IAnswer>;
+    // answers: Types.Array<Types.ObjectId | IAnswer>;
 }
 
 const UserSchema = new Schema({
@@ -17,7 +17,7 @@ const UserSchema = new Schema({
     firstName: {type: String},
     lastName: {type: String},
     photo: {type: String},
-    answers: [{type: Schema.Types.ObjectId, ref: "Answer"}],
+    // answers: [{type: Schema.Types.ObjectId, ref: "Answer"}],
 })
 
 const User = models.User || model("User", UserSchema);

@@ -9,7 +9,7 @@ export const TopicMarksTable = ({marks}: { marks: MarkStats[] }) => {
             field: "description",
             headerName: "Topic description",
             flex: 1,
-            renderCell: (params) => (<div style={{whiteSpace: "pre-line"}}>{params.value}</div>)
+            renderCell: (params) => (<Box className={"flex min-h-[52px] my-3 items-center whitespace-pre-line"}>{params.value}</Box>)
         },
         {field: "mark", headerName: "Mark", width: 100},
         {field: "total", headerName: "Out of", width: 100},

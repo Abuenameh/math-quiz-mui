@@ -45,7 +45,7 @@ export async function editTopic({topic, path}: EditTopicParams) {
         if (!topicToEdit) {
             throw new Error('Topic not found')
         }
-        console.log(topicToEdit)
+        // console.log(topicToEdit)
 
         const editedTopic = await Topic.findByIdAndUpdate(
             topic._id,

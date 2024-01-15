@@ -16,7 +16,7 @@ const CourseDetails = async ({params: {topicId}}: SearchParamProps) => {
     const user = await currentUser();
     const userId = user?.publicMetadata?.userId as string;
     const isAdmin = user?.publicMetadata.isAdmin as boolean || false;
-    console.log(userId)
+    // console.log(userId)
 
     const topic = await getTopicById(topicId);
     const questions: IQuestion[] = isAdmin ? await getQuestionsByTopic(topicId) : await getAnsweredQuestionsByTopic(topicId, userId);

@@ -7,8 +7,16 @@ import {revalidatePath} from "next/cache";
 import {handleError} from "@/lib/utils";
 import Question, {IQuestion} from "@/lib/database/models/question.model";
 import Topic, {ITopic} from "@/lib/database/models/topic.model";
-import Answer from "@/lib/database/models/answer.model";
+// import Answer from "@/lib/database/models/answer.model";
 import {utapi} from "@/app/api/uploadthing/core"
+import {
+    deleteDeclaration,
+    deleteDeclarationsByQuestion,
+    getDeclarationsByQuestion
+} from "@/lib/actions/declaration.actions";
+import {IDeclaration} from "@/lib/database/models/declaration.model";
+import {deleteResponsesByQuestion} from "@/lib/actions/response.actions";
+import Response from "@/lib/database/models/response.model";
 
 export const createQuestion = async ({question, path}: CreateQuestionParams) => {
     try {
@@ -90,15 +98,15 @@ export async function getAnsweredQuestionsByTopic(topicId: string, userId: strin
 
         const conditions = {user: userId}
 
-        const answersQuery = Answer.find(conditions)
+        const responsesQuery = Response.find(conditions)
             .populate<{ question: IQuestion }>({
                 path: "question",
                 model: Question,
                 populate: {path: "topic", model: Topic, populate: {path: "course", model: Course}}
             })
 
-        const answers = await answersQuery;
-        const questions = answers.map(answer => answer.question).filter(question => question.topic._id.toString("hex") === topicId)
+        const responses = await responsesQuery;
+        const questions = [...new Map(responses.map(response => response.question).filter(question => question.topic._id.toString("hex") === topicId).map(item => [item._id, item])).values()];
 
         return JSON.parse(JSON.stringify(questions));
     } catch (error) {
@@ -154,6 +162,9 @@ export async function clearCurrentQuestion() {
 export async function deleteQuestion({questionId, path}: DeleteQuestionParams) {
     try {
         await connectToDatabase()
+
+        await deleteDeclarationsByQuestion(questionId)
+        await deleteResponsesByQuestion(questionId)
 
         const question = await Question.findById(questionId)
         if (question) {

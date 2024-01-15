@@ -22,6 +22,7 @@ import {deleteQuestion, getQuestionsByTopic} from "@/lib/actions/question.action
 import {IQuestion} from "@/lib/database/models/question.model";
 import {useUser} from "@clerk/nextjs";
 import {CurrentQuestion} from "@/components/CurrentQuestion";
+import Typography from "@mui/material/Typography";
 
 function TopicToolbar() {
     const router = useRouter();
@@ -80,7 +81,7 @@ export const TopicTable = ({topics}: TopicTableProps) => {
             field: "description",
             headerName: "Topic description",
             flex: 1,
-            renderCell: (params) => (<div style={{whiteSpace: "pre-line"}}>{params.value}</div>)
+            renderCell: (params) => (<Box className={"flex min-h-[52px] my-3 items-center whitespace-pre-line"}>{params.value}</Box>)
         },
         {
             field: "actions", type: "actions", getActions: (params) => [

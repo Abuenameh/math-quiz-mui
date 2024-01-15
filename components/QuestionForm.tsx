@@ -29,6 +29,7 @@ type QuestionFormProps = {
 type QuestionProps = {
     name: string,
     question: string,
+    layouts?: string,
     imageUrl?: string,
     imageKey?: string,
     showSolution: boolean,
@@ -42,6 +43,7 @@ export const QuestionForm = ({type, topicId, question, questionId}: QuestionForm
         defaultValues: {
             name: question?.name || "",
             question: question?.question || "",
+            layouts: question?.layouts || "",
             showSolution: question?.showSolution || false,
         },
     });
@@ -99,7 +101,7 @@ export const QuestionForm = ({type, topicId, question, questionId}: QuestionForm
 
         if (type === "Create") {
             try {
-                console.log(topicId)
+                // console.log(topicId)
                 const newQuestion = await createQuestion({
                     question: {...data, topic: topicId},
                     path: `/topics/${topicId}`,
@@ -238,6 +240,9 @@ export const QuestionForm = ({type, topicId, question, questionId}: QuestionForm
                     ))}
                     <Button onClick={onAddDeclaration}>Add Declaration</Button>
                     <FileUploader setImageUrl={setImageUrl} imageUrl={imageUrl} setFile={setFile}/>
+                    <Box className={"w-full"}>
+                    <TextFieldElement name={"layouts"} label={"Virtual keyboard layout"} multiline fullWidth/>
+                    </Box>
                     <CheckboxElement name={"showSolution"} label={"Show Solution"}/>
                     <Button disabled={isSubmitting} type={"submit"} variant={"contained"} size={"large"}
                             className={"button col.span-2 w-full"}>

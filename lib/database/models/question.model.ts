@@ -5,6 +5,7 @@ export interface IQuestion {
     _id: Types.ObjectId;
     name: string;
     question: string;
+    layouts?: string;
     imageUrl?: string;
     imageKey?: string;
     showSolution: boolean;
@@ -15,6 +16,7 @@ export interface IQuestion {
 const QuestionSchema = new Schema({
     name: {type: String, required: true},
     question: {type: String, required: true},
+    layouts: {type: String},
     imageUrl: {type: String},
     imageKey: {type: String},
     showSolution: {type: Boolean, default: false},
