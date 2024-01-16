@@ -40,16 +40,16 @@ export const Question = ({question, declarations, userId, isAdmin, isPowerPoint}
     // const responses = useRef<MathAnswerResults>(new Map());
     // const [savedResponses, setSavedResponses] = useState<MathAnswerResults>(new Map());
     // const [submitted, setSubmitted] = useState(false)
-    const [showSolution, setShowSolution] = useState(userId !== "" ? question.showSolution : false)
+    const [showSolution, setShowSolution] = useState(userId === "view" ? false : userId === "view_solution" ? true : question.showSolution)
 
     const [responses, responsesActions] = useMap<string, ResponseProps>()
     const [savedResponses, savedResponsesActions] = useMap<string, ResponseProps>()
     const [correct, correctActions] = useMap<string, boolean>()
-    const [answered, setAnswered] = useState(false);
+    const [answered, setAnswered] = useState(userId === "view_solution");
     const [hadFocus, setHadFocus] = useState(true);
 
     const {channel: showSolutionChannel} = useChannel("show-solution", () => {
-        if (userId !== "") {
+        if (!userId.startsWith("view")) {
             submit();
             setShowSolution(true);
         }
@@ -83,6 +83,7 @@ export const Question = ({question, declarations, userId, isAdmin, isPowerPoint}
 
     useEffectOnce(() => {
         const fetchResponses = async () => {
+            if (userId.startsWith("view")) return
             // responsesActions.reset()
             const savedResponses = await getResponsesByQuestionAndUser(question._id.toString("hex"), userId) as IResponse[]
             // console.log("savedResponses", savedResponses)
@@ -217,7 +218,7 @@ export const Question = ({question, declarations, userId, isAdmin, isPowerPoint}
 
     return (
         <>
-            {userId !== "" && <CurrentQuestion/>}
+            {!userId.startsWith("view") && <CurrentQuestion/>}
             {loaded ?
                 <>
                     {question.imageUrl &&

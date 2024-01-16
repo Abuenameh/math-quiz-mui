@@ -27,7 +27,7 @@ export async function getResponsesByQuestionAndUser(questionId: string, userId: 
     try {
         await connectToDatabase();
 
-        const conditions = userId ? {question: questionId, user: userId} : {question: questionId}
+        const conditions = userId.startsWith("view") ? {question: questionId} : {question: questionId, user: userId}
 
         const responses = await Response.find(conditions);
 

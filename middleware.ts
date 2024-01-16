@@ -10,12 +10,14 @@ export default authMiddleware({
         '/api/ably/token',
         '/api/uploadthing',
         '/questions/view/:questionId',
+        '/questions/solution/:questionId',
     ],
     ignoredRoutes: [
         '/api/webhook/clerk',
         '/api/ably/token',
         '/api/uploadthing',
         '/questions/view/:questionId',
+        '/questions/solution/:questionId',
     ]
 });
 
