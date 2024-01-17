@@ -22,6 +22,8 @@ import {useChannel} from "ably/react";
 import {useUser} from "@clerk/nextjs";
 import {CurrentQuestion} from "@/components/CurrentQuestion";
 import {deleteResponsesByQuestion} from "@/lib/actions/response.actions";
+import {MathJax} from "better-react-mathjax";
+import {MathContext} from "@/components/MathContext";
 
 function QuestionToolbar() {
     const router = useRouter();
@@ -83,7 +85,12 @@ export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
     const columns: GridColDef[] = [
         {field: "num", headerName: "#", width: 80},
         {field: "name", headerName: "Name", width: 200},
-        {field: "question", headerName: "Question", flex: 1},
+        {
+            field: "question",
+            headerName: "Question",
+            flex: 1,
+            renderCell: (params) => (<MathJax>{params.value}</MathJax>)
+        },
         {
             field: "actions", type: "actions", getActions: (params) => [
                 <GridActionsCellItem key={params.id} label={"Edit"} icon={<EditIcon/>}
@@ -97,7 +104,8 @@ export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
     ];
 
     const removeAnswers = (question: string): string => {
-        return question.replace(/⟬⟦.*⟭|⦗⟦.*⦘/gim, "");
+        return question.replace(/\\{.*?\\}/gim, "⬜").replace(/\\\[/gm, "\\(").replace(/\\]/gm, "\\)");
+        // return question.replace(/⟬⟦.*⟭|⦗⟦.*⦘/gim, "");
     }
 
     const rows = questions.map((question) => ({
@@ -123,6 +131,7 @@ export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
 
     return (
         <>
+            <MathContext>
             <CurrentQuestion/>
             <Box className={"h-[30rem]"}>
                 <DataGrid columns={columns} rows={rows} disableRowSelectionOnClick disableColumnFilter
@@ -139,6 +148,7 @@ export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
                     actions: isAdmin
                 }} onRowClick={onRowClick}/>
             </Box>
+            </MathContext>
         </>
     );
 };

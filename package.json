@@ -21,6 +21,7 @@
     "@mui/x-date-pickers": "^6.18.6",
     "@uploadthing/react": "^6.1.0",
     "ably": "^1.2.48",
+    "better-react-mathjax": "^2.0.3",
     "compute-engine": "github:Abuenameh/compute-engine",
     "insert-text-at-cursor": "^0.3.0",
     "mathlive": "Abuenameh/mathlive",

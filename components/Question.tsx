@@ -15,6 +15,7 @@ import "compute-engine";
 import {createResponse, getResponsesByQuestionAndUser} from "@/lib/actions/response.actions";
 import {useEffectOnce, useMap} from "usehooks-ts";
 import {IResponse} from "@/lib/database/models/response.model";
+import {MathContext} from "@/components/MathContext";
 
 export type ResponseProps = {
     id: string
@@ -218,6 +219,7 @@ export const Question = ({question, declarations, userId, isAdmin, isPowerPoint}
 
     return (
         <>
+            <MathContext>
             {!userId.startsWith("view") && <CurrentQuestion/>}
             {loaded ?
                 <>
@@ -241,6 +243,7 @@ export const Question = ({question, declarations, userId, isAdmin, isPowerPoint}
                 <Button variant={"contained"} disabled={answered}
                         onClick={submit}>{answered ? "Submitted" : "Submit Answer"}</Button>)
             }
+            </MathContext>
         </>
     );
 };

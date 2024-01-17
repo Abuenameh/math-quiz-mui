@@ -12,6 +12,7 @@ export type MathAnswerProps = {
     // response: IResponse
     id: string
     answer: string
+    size: number
     mark: number
     // responses: MathAnswerResults
     response: string
@@ -34,6 +35,7 @@ export const MathAnswer = ({
     // response,
                                id,
                                answer,
+    size,
                                mark,
                                response,
     responses,
@@ -89,15 +91,15 @@ export const MathAnswer = ({
 
     const responseStyle = {
         display: (answered && (isAdmin || isPowerPoint || !hadFocus)) ? "none" : display,
-        width: (display === "inline-block") && (editable || isAdmin || isPowerPoint || !hadFocus) ? "5em" : "auto",
-        height: (display === "block") && (editable || isAdmin || isPowerPoint || !hadFocus ) ? "5em" : "auto",
+        width: (display === "inline-block") && (editable || isAdmin || isPowerPoint || !hadFocus) ? `${size}em` : "auto",
+        height: (display === "block") && (editable || isAdmin || isPowerPoint || !hadFocus ) ? `${size}em` : "auto",
         color: actuallyShowSolution ? (correct ? "black" : "black") : "auto",
         backgroundColor: actuallyShowSolution ? (correct ? "#81c784" : "#e57373") : "auto",
     };
     const answerStyle = {
         display: !actuallyShowSolution ? "none" : display,
-        marginLeft: display === "inline-block" ? "0.5em" : "auto",
-        marginTop: display === "block" ? "0.5em" : "auto",
+        marginLeft: display === "inline-block" && !(answered && (isAdmin || isPowerPoint || !hadFocus)) ? "0.5em" : "auto",
+        marginTop: display === "block" && !(answered && (isAdmin || isPowerPoint || !hadFocus)) ? "0.5em" : "auto",
     };
 
     // if (submitted && dirty) {

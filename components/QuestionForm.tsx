@@ -203,20 +203,20 @@ export const QuestionForm = ({type, topicId, num, question, questionId}: Questio
                     <Box className={"w-full"}>
                         <TextFieldElement inputRef={questionRef} multiline fullWidth name={"question"}
                                           label={"Question text"} required/>
-                        <Box className={"flex flex-row gap-2 pt-5"}>
-                            <Button sx={{textTransform: "none"}} variant={"contained"} size={"large"} onClick={() => {
-                                insertText("⟬⟭")
-                            }}>⟬ <InlineMath>x</InlineMath> ⟭</Button>
-                            <Button sx={{textTransform: "none"}} variant={"contained"} size={"large"} onClick={() => {
-                                insertText("⦗⦘")
-                            }}>⦗ <InlineMath>x</InlineMath> ⦘</Button>
-                            <Button variant={"contained"} size={"large"} onClick={() => {
-                                insertText("⟬⟦,⟧⟭")
-                            }}>⟬ ⬜ ⟭</Button>
-                            <Button variant={"contained"} size={"large"} onClick={() => {
-                                insertText("⦗⟦,⟧⦘")
-                            }}>⦗ ⬜ ⦘</Button>
-                        </Box>
+                        {/*<Box className={"flex flex-row gap-2 pt-5"}>*/}
+                        {/*    <Button sx={{textTransform: "none"}} variant={"contained"} size={"large"} onClick={() => {*/}
+                        {/*        insertText("⟬⟭")*/}
+                        {/*    }}>⟬ <InlineMath>x</InlineMath> ⟭</Button>*/}
+                        {/*    <Button sx={{textTransform: "none"}} variant={"contained"} size={"large"} onClick={() => {*/}
+                        {/*        insertText("⦗⦘")*/}
+                        {/*    }}>⦗ <InlineMath>x</InlineMath> ⦘</Button>*/}
+                        {/*    <Button variant={"contained"} size={"large"} onClick={() => {*/}
+                        {/*        insertText("⟬⟦,,⟧⟭")*/}
+                        {/*    }}>⟬ ⬜ ⟭</Button>*/}
+                        {/*    <Button variant={"contained"} size={"large"} onClick={() => {*/}
+                        {/*        insertText("⦗⟦,,⟧⦘")*/}
+                        {/*    }}>⦗ ⬜ ⦘</Button>*/}
+                        {/*</Box>*/}
                     </Box>
                     {declarations.map((declaration, index) => (
                         <Box key={declaration.id} className={"flex flex-col gap-5 w-full md:flex-row"}>

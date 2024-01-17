@@ -9,6 +9,9 @@ import {createTopic, editTopic} from "@/lib/actions/topic.actions";
 import {ITopic} from "@/lib/database/models/topic.model";
 import {useUser} from "@clerk/nextjs";
 import {CurrentQuestion} from "@/components/CurrentQuestion";
+import {InlineMath} from "react-katex";
+import insertTextAtCursor from "insert-text-at-cursor";
+import {useRef} from "react";
 
 type TopicFormProps = {
     type: "Create" | "Edit"
@@ -34,6 +37,7 @@ export const TopicForm = ({type, courseId, topic, topicId}: TopicFormProps) => {
         },
     });
     const {isSubmitting} = useFormState(formContext);
+    const topicRef = useRef<HTMLInputElement>(null);
 
     const isAdmin = user?.publicMetadata.isAdmin as boolean || false;
 
@@ -79,6 +83,10 @@ export const TopicForm = ({type, courseId, topic, topicId}: TopicFormProps) => {
         }
     }
 
+    const insertText = (text: string) => {
+        topicRef.current && insertTextAtCursor(topicRef.current, text);
+    }
+
     return (
         <>
             <CurrentQuestion/>
@@ -93,7 +101,7 @@ export const TopicForm = ({type, courseId, topic, topicId}: TopicFormProps) => {
                         </Box>
                     </Box>
                     <Box className={"w-full"}>
-                        <TextFieldElement fullWidth name={"description"} label={"Topic description"} multiline/>
+                        <TextFieldElement inputRef={topicRef} fullWidth name={"description"} label={"Topic description"} multiline/>
                     </Box>
                     <Button disabled={isSubmitting} type={"submit"} variant={"contained"} size={"large"}
                             className={"button col.span-2 w-full"}>

@@ -22,7 +22,8 @@ import {deleteQuestion, getQuestionsByTopic} from "@/lib/actions/question.action
 import {IQuestion} from "@/lib/database/models/question.model";
 import {useUser} from "@clerk/nextjs";
 import {CurrentQuestion} from "@/components/CurrentQuestion";
-import Typography from "@mui/material/Typography";
+import {MathJax} from "better-react-mathjax";
+import {MathContext} from "@/components/MathContext";
 
 function TopicToolbar() {
     const router = useRouter();
@@ -81,7 +82,7 @@ export const TopicTable = ({topics}: TopicTableProps) => {
             field: "description",
             headerName: "Topic description",
             flex: 1,
-            renderCell: (params) => (<Box className={"flex min-h-[52px] my-3 items-center whitespace-pre-line"}>{params.value}</Box>)
+            renderCell: (params) => (<Box className={"flex min-h-[52px] my-3 items-center whitespace-pre-line"}><MathJax>{params.value}</MathJax></Box>)
         },
         {
             field: "actions", type: "actions", getActions: (params) => [
@@ -106,6 +107,7 @@ export const TopicTable = ({topics}: TopicTableProps) => {
 
     return (
         <>
+            <MathContext>
             <CurrentQuestion/>
             <Box className={"h-[30rem]"}>
                 <DataGrid getRowHeight={() => 'auto'} columns={columns} rows={rows} disableRowSelectionOnClick
@@ -122,6 +124,7 @@ export const TopicTable = ({topics}: TopicTableProps) => {
                     actions: isAdmin
                 }} onRowClick={onRowClick}/>
             </Box>
+            </MathContext>
         </>
     );
 };
