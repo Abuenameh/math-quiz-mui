@@ -116,6 +116,7 @@ export const Question = ({question, declarations, userId, isAdmin, isPowerPoint}
         const ce = MathfieldElement.computeEngine;
         if (ce) {
             ce.pushScope();
+            ce.tolerance = 0.001;
             declarations.forEach((declaration) => {
                 // @ts-ignore
                 ce.declare(declaration.symbol, declaration.domain);

@@ -19,21 +19,15 @@ declare global {
 }
 
 type MathProps = {
-    // text: string
     question: string
     responses: Omit<Map<string, ResponseProps>, "set" | "clear" | "delete">
-    // responses: MathAnswerResults
-    // savedResponses: MathAnswerResults
     answered: boolean
     correct: Omit<Map<string, boolean>, "set" | "clear" | "delete">
     hadFocus: boolean
-    // submitted: boolean
     showSolution: boolean
-    // userId: string
     isAdmin: boolean
     isPowerPoint: boolean
     responseActions: Actions<string, ResponseProps>
-    // updateResponse: (id: string, response: string, correct: boolean, mark: number) => void
 }
 
 // function toMath({
@@ -138,7 +132,6 @@ export const Math = ({question,
                             size: Number(result?.[3]) || 5,
                             mark: Number(result?.[2]) || 0,
                             response: responses.get(id)?.response || "",
-                            responses: responses,
                             answered: answered,
                             correct: correct.get(id) || false,
                             hadFocus: hadFocus,
