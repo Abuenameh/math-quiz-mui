@@ -98,7 +98,7 @@ export const CourseTable = ({courses}: CourseTableProps) => {
     return (
         <>
             <CurrentQuestion/>
-            <Box className={"h-[30rem]"}>
+            <Box className={"h-[60rem]"}>
                 <DataGrid columns={columns} rows={rows} disableRowSelectionOnClick disableColumnFilter
                           disableColumnSelector disableDensitySelector slots={{toolbar: CourseToolbar}} initialState={{
                     filter: {

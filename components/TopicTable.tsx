@@ -109,7 +109,7 @@ export const TopicTable = ({topics}: TopicTableProps) => {
         <>
             <MathContext>
             <CurrentQuestion/>
-            <Box className={"h-[30rem]"}>
+            <Box className={"h-[60rem]"}>
                 <DataGrid getRowHeight={() => 'auto'} columns={columns} rows={rows} disableRowSelectionOnClick
                           disableColumnFilter disableColumnSelector disableDensitySelector
                           slots={{toolbar: TopicToolbar}} initialState={{

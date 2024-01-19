@@ -18,7 +18,7 @@ const CoursesPage = async () => {
                 </Box>
             </Box>
 
-            <Box id="events" className="wrapper my-8 flex flex-col gap-8 md:gap-12">
+            <Box id="courses" className="wrapper my-8 flex flex-col gap-8 md:gap-12">
                 <CourseTable courses={courses}/>
             </Box>
         </>

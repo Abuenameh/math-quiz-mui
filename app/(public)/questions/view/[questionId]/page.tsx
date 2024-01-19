@@ -23,7 +23,7 @@ const QuestionPage = async ({params: {questionId}}: SearchParamProps) => {
                 </div>
             </header>
 
-            <Box id="events" className="view-wrapper flex flex-col gap-8 md:gap-12">
+            <Box id="question" className="view-wrapper flex flex-col gap-8 md:gap-12">
                 <Question question={question} declarations={declarations} userId={"view"}
                           isAdmin={false}
                           isPowerPoint={true}/>

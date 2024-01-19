@@ -39,7 +39,7 @@ const QuestionPage = async ({params: {questionId}}: SearchParamProps) => {
                 </Box>
             </Box>
 
-            <Box id="events" className="wrapper my-8 flex flex-col gap-8 md:gap-12">
+            <Box id="question" className="wrapper my-8 flex flex-col gap-8 md:gap-12">
                 <RealtimeComponent>
                     <Question question={question} declarations={declarations} userId={userId}
                               isAdmin={user?.publicMetadata.isAdmin as boolean || false}

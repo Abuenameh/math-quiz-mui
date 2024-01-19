@@ -21,7 +21,7 @@ const CourseDetails = async ({params: {courseId}}: SearchParamProps) => {
                 </Box>
             </Box>
 
-            <Box id="events" className="wrapper my-8 flex flex-col gap-8 md:gap-12">
+            <Box id="topics" className="wrapper my-8 flex flex-col gap-8 md:gap-12">
                 <TopicTable topics={topics}/>
             </Box>
         </>

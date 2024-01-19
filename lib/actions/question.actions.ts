@@ -165,7 +165,8 @@ export async function deleteQuestion({questionId, path}: DeleteQuestionParams) {
         const question = await Question.findById(questionId)
         if (question) {
             const imageKey = question.imageKey
-            await utapi.deleteFiles(imageKey)
+            if (imageKey)
+                await utapi.deleteFiles(imageKey)
         }
 
         const deletedQuestion = await Question.findByIdAndDelete(questionId)

@@ -34,7 +34,7 @@ const CourseDetails = async ({params: {topicId}}: SearchParamProps) => {
                 </Box>
             </Box>
 
-            <Box id="events" className="wrapper my-8 flex flex-col gap-8 md:gap-12">
+            <Box id="questions" className="wrapper my-8 flex flex-col gap-8 flex-1 md:gap-12">
                 <RealtimeComponent>
                     <QuestionTable topicId={topicId} questions={questions}/>
                 </RealtimeComponent>

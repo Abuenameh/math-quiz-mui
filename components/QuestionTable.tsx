@@ -133,7 +133,7 @@ export const QuestionTable = ({topicId, questions}: QuestionTableProps) => {
         <>
             <MathContext>
             <CurrentQuestion/>
-            <Box className={"h-[30rem]"}>
+            <Box className={"h-[60rem]"}>
                 <DataGrid columns={columns} rows={rows} disableRowSelectionOnClick disableColumnFilter
                           disableColumnSelector disableDensitySelector slots={{toolbar: QuestionToolbar}}
                           initialState={{
