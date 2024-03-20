@@ -223,5 +223,5 @@ math-field {
 
 /* Hide the menu toggle */
 math-field::part(menu-toggle) {
-    display: none;
+    /*display: none;*/
 }
